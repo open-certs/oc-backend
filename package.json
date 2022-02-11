@@ -1,16 +1,33 @@
 {
   "name": "oc-backend",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": true,
+  "main": "./bin/www",
+  "engines": {
+    "node": ">=10.0.0"
+  },
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "nodemon ./bin/www",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "eslint . --fix"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
+    "dotenv": "^16.0.0",
     "ejs": "~2.6.1",
     "express": "~4.16.1",
     "http-errors": "~1.6.3",
+    "mongoose": "^6.2.1",
     "morgan": "~1.9.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.8.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "husky": "^7.0.4",
+    "nodemon": "^2.0.15",
+    "prettier": "^2.5.1"
   }
 }
