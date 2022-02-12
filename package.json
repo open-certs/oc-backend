@@ -4,7 +4,7 @@
   "private": true,
   "main": "./bin/www",
   "engines": {
-    "node": ">=10.0.0"
+    "node": ">=10.0.0 <17.0.0"
   },
   "scripts": {
     "start": "node ./bin/www",
