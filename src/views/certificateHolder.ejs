@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Certificate</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+  </head>
+  <body>
+    <%- html %>
+    <center id="footer" style="padding: 20px;">
+        <span onclick="print()" style="border: solid;border-width: 1px;border-color: black;color: blanchedalmond;background-color: brown;padding: 10px;cursor: pointer;">
+            Print
+        </span>
+    </center>
+    <script>
+        const print=async()=>{
+            await window.print()
+        }
+    </script>
+    <style type="text/css" media="print">
+        @page { 
+            size: Letter landscape;
+            margin: 0px;
+         }
+         @media print{
+             #footer{
+                 display: none !important;
+             }
+         }
+      </style>
+  </body>
+</html>
