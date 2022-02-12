@@ -6,7 +6,7 @@ const getKit = (auth) => {
     });
 };
 
-const getGithubRepos = (auth, owner, repo) => {
+const getGithubRepo = (auth, owner, repo) => {
     const kit = getKit(auth);
     return kit.rest.repos.get({
         owner,
@@ -15,5 +15,5 @@ const getGithubRepos = (auth, owner, repo) => {
 };
 
 module.exports = {
-    getGithubRepos
+    getGithubRepo
 };

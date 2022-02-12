@@ -1,12 +1,12 @@
 const express = require('express');
+const { profile } = require('../controllers/user.controler');
+const { validate } = require('../helpers/jwt.helper');
 const router = express.Router();
 
-/* GET users listing. */
-router.get('/', function (req, res) {
-    res.send('respond with a resource');
-});
+router.get('/', validate, profile);
 
 const userRouter = (app) => {
     app.use('/users', router);
 };
+
 module.exports = userRouter;
