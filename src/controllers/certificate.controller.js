@@ -1,9 +1,14 @@
-const { getGithubRepo } = require('../helpers/github.helper');
+const {
+    getGithubRepo,
+    getCommits,
+    getPullRequests
+} = require('../helpers/github.helper');
+const CertificateSchema = require('../models/certificate');
 
 exports.generateGithubCert = async (req, res) => {
     try {
         const user = req.user;
-
+        // console.log(user);
         let repo = await getGithubRepo(
             user.accessToken,
             req.params.owner,
@@ -25,8 +30,57 @@ exports.generateGithubCert = async (req, res) => {
         if (repo.source) {
             throw new Error("Certificate can't be generated for forks");
         }
+        const commits = await getCommits(
+            user.accessToken,
+            req.params.owner,
+            req.params.repo
+        );
+        const pullRequests = await getPullRequests(
+            user.accessToken,
+            req.params.owner,
+            req.params.repo
+        );
+        if (
+            commits.data.total_count == 0 &&
+            pullRequests.data.total_count == 0
+        ) {
+            throw new Error('No commits found by user');
+        }
+        const certificate = await CertificateSchema.create({
+            userGithubId: user.username,
+            userName: user.displayName,
+            projectRepo: req.params.repo,
+            projectOwner: req.params.owner,
+            commitCount: commits.data.total_count,
+            pullRequestCount: pullRequests.data.total_count,
+            images: [
+                'https://cdn-icons-png.flaticon.com/512/25/25231.png',
+                repo.owner.avatar_url,
+                user._json.avatar_url
+            ]
+        });
         return res.status(200).json({
-            data: repo
+            certificate
+            // data: repo
+            // commits,
+            // pullRequests
+        });
+    } catch (e) {
+        console.log(e);
+        res.status(200).json({
+            error: String(e)
+        });
+    }
+};
+
+exports.getCert = async (req, res) => {
+    try {
+        const certificate = await CertificateSchema.findById(req.params.id);
+        if (!certificate) {
+            throw new Error('Invalid Certificate Id');
+        }
+        return res.status(200).json({
+            certificate
         });
     } catch (e) {
         console.log(e);

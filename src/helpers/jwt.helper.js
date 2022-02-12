@@ -19,7 +19,7 @@ exports.verify = (token) =>
 
 exports.validate = (req, res, next) => {
     const token = req.headers['authorization'];
-    // console.log(token)
+    // console.log(token);
 
     if (token) {
         exports
@@ -29,8 +29,9 @@ exports.validate = (req, res, next) => {
                 next();
             })
             .catch((err) => {
+                // console.log(err);
                 return res.status(200).json({
-                    error: err.message,
+                    error: err,
                     logout: true
                 });
             });

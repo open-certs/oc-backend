@@ -14,6 +14,26 @@ const getGithubRepo = (auth, owner, repo) => {
     });
 };
 
+const getCommits = (auth, owner, repo) => {
+    const kit = getKit(auth);
+    const q = `author:@me repo:${owner}/${repo}`;
+    // console.log(q);
+    return kit.rest.search.commits({
+        q
+    });
+};
+
+const getPullRequests = (auth, owner, repo) => {
+    const kit = getKit(auth);
+    const q = `is:merged is:pr author:@me repo:${owner}/${repo}`;
+    // console.log(q);
+    return kit.rest.search.issuesAndPullRequests({
+        q
+    });
+};
+
 module.exports = {
-    getGithubRepo
+    getGithubRepo,
+    getCommits,
+    getPullRequests
 };
