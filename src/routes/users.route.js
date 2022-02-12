@@ -3,7 +3,7 @@ const { profile } = require('../controllers/user.controler');
 const { validate } = require('../helpers/jwt.helper');
 const router = express.Router();
 
-router.get('/', validate, profile);
+router.get('/me', validate, profile);
 
 const userRouter = (app) => {
     app.use('/users', router);
