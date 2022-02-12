@@ -2,7 +2,7 @@ const { getGithubRepo } = require('../helpers/github.helper');
 
 exports.generateGithubCert = async (req, res) => {
     try {
-        const user = req.user.user;
+        const user = req.user;
 
         let repo = await getGithubRepo(
             user.accessToken,
