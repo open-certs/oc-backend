@@ -1,0 +1,66 @@
+<div style = "height:1155px; width:1500px;padding-top:0px;margin:0;" >
+    <style > * {
+        padding: 0;
+        margin: 0;
+        } 
+        a {
+            text-decoration: none;
+            color: black
+        }
+        .text-bg {
+            background: linear-gradient(
+                90deg,
+                rgba(255, 114, 110, 1) 0%,
+                rgba(224, 68, 44, 1) 40%,
+                rgba(74, 111, 253, 1) 69%,
+                rgba(74, 111, 253, 1) 79%
+            );
+            -webkit-text-fill-color: transparent;
+            -webkit-background-clip: text;
+        }
+        .flex-container {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            margin: 250px 100px 100px 100px;
+        }
+        .icon{
+            height: 100px;
+            width: auto;
+        }
+        .icon-qr{
+            height: 177px;
+            width: auto;
+        }
+    </style>
+    <div style = "margin: 0px; padding: 0px; height:100%; width:100%;" >
+        <img src = "https://user-images.githubusercontent.com/41825906/153724469-5b2f41be-e317-4ba8-88fb-b2832aab507a.png"
+            style = "height: 100% ;width: 100% ;padding: 0px;margin: 0px;	" > 
+        </img> 
+        <div style = "position: absolute;top: 0;left: 0;height: 1155px;width: 1500px;padding: 0px;margin: 0px;">
+            <center>
+                <h1 style="max-width: 50%;font-size: 6rem;padding-top: 100px;" class="text-bg">Certificate</h1>
+                <h2 style="max-width: 50%;font-size: 4.5rem;" class="text-bg">of Contribution</h2>
+                <div style="max-width: 75%;">
+                    <div style="font-size: 2.4rem;padding-top: 150px;font-family: 'Roboto Slab', serif;line-height: 55px;">
+                        This is to certify that <br/>
+                        <span style='color: #e0442c;font-weight: 900;font-size: 3.5rem;'> <%= data.userName%> </span><br/>
+                        has actively contibuted to open source project <b><%= data.repoName %></b> of <b><%= data.owner %>.</b>
+                    </div>
+                </div>
+            </center> 
+            <div class="flex-container">
+                <div>
+                    <img class="icon-qr" src="https://chart.googleapis.com/chart?chs=177x177&cht=qr&chl=<%= data.verifyAt %>"/><br/>
+                    <p style="color: #4a6ffd; text-align: center;font-size: 1rem;">Scan to verify</p>
+                </div>
+                <div style="padding-top: 75px;">
+                    <% for(var loop=0; loop < data.images.length; loop++) { %>
+                        <img class="icon" src="<%= data.images[loop] %>"/>
+                     <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
