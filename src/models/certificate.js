@@ -1,6 +1,6 @@
-var mongoose = require('mongoose');
+const mongoose = require('mongoose');
 
-var CertificateSchema = new mongoose.Schema(
+const CertificateSchema = new mongoose.Schema(
     {
         userGithubId: String,
         userName: String,
@@ -8,7 +8,7 @@ var CertificateSchema = new mongoose.Schema(
         projectOwner: String,
         commitCount: Number,
         pullRequestCount: Number,
-        images: [String]
+        images: { type: [String], default: [] }
     },
     { timestamps: true },
     { collection: 'certificates' }

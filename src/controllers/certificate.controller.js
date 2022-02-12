@@ -3,6 +3,8 @@ const {
     getCommits,
     getPullRequests
 } = require('../helpers/github.helper');
+const ejs = require('ejs');
+const path = require('path');
 const CertificateSchema = require('../models/certificate');
 
 exports.generateGithubCert = async (req, res) => {
@@ -30,16 +32,10 @@ exports.generateGithubCert = async (req, res) => {
         if (repo.source) {
             throw new Error("Certificate can't be generated for forks");
         }
-        const commits = await getCommits(
-            user.accessToken,
-            req.params.owner,
-            req.params.repo
-        );
-        const pullRequests = await getPullRequests(
-            user.accessToken,
-            req.params.owner,
-            req.params.repo
-        );
+        const [commits, pullRequests] = await Promise.all([
+            getCommits(user.accessToken, req.params.owner, req.params.repo),
+            getPullRequests(user.accessToken, req.params.owner, req.params.repo)
+        ]);
         if (
             commits.data.total_count == 0 &&
             pullRequests.data.total_count == 0
@@ -75,17 +71,31 @@ exports.generateGithubCert = async (req, res) => {
 
 exports.getCert = async (req, res) => {
     try {
-        const certificate = await CertificateSchema.findById(req.params.id);
+        const certificate = await CertificateSchema.findById(
+            req.params.id
+        ).lean();
         if (!certificate) {
             throw new Error('Invalid Certificate Id');
         }
-        return res.status(200).json({
-            certificate
+        // console.log({
+        //     ...certificate,
+        //     verifyAt: `${process.env.BASE_URL}/certificate/${certificate._id}`
+        // });
+        return res.render('certificateHolder', {
+            html: await ejs.renderFile(
+                path.join(__dirname, '../views/certificate.ejs'),
+                {
+                    data: {
+                        ...certificate,
+                        verifyAt: `${process.env.BASE_URL}/certificate/${certificate._id}`
+                    }
+                }
+            )
         });
     } catch (e) {
         console.log(e);
-        res.status(200).json({
-            error: String(e)
+        res.render('error', {
+            message: String(e)
         });
     }
 };
