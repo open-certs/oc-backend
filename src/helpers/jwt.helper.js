@@ -30,15 +30,13 @@ exports.validate = (req, res, next) => {
             })
             .catch((err) => {
                 return res.status(200).json({
-                    err: true,
-                    msg: err.message,
+                    error: err.message,
                     logout: true
                 });
             });
     } else {
         return res.status(200).json({
-            err: true,
-            msg: 'No token supplied',
+            error: 'No token supplied',
             logout: true
         });
     }
