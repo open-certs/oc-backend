@@ -7,7 +7,8 @@
     "node": ">=10.0.0"
   },
   "scripts": {
-    "start": "nodemon ./bin/www",
+    "start": "node ./bin/www",
+    "dev": "nodemon ./bin/www",
     "test": "echo \"Error: no test specified\" && exit 1",
     "format": "eslint . --fix"
   },
