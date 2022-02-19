@@ -6,6 +6,7 @@ const {
 const ejs = require('ejs');
 const path = require('path');
 const CertificateSchema = require('../models/certificate');
+const constants = require('../config/constants');
 
 exports.generateGithubCert = async (req, res) => {
     try {
@@ -42,6 +43,14 @@ exports.generateGithubCert = async (req, res) => {
         ) {
             throw new Error('No commits found by user');
         }
+        const images = [constants.GITHUB_LOGO];
+        // console.log(req.body);
+        if (req.body.includeRepositoryImage) {
+            images.push(repo.owner.avatar_url);
+        }
+        if (req.body.includeUserImage) {
+            images.push(user._json.avatar_url);
+        }
         const certificate = await CertificateSchema.create({
             userGithubId: user.username,
             userName: user.displayName,
@@ -49,11 +58,7 @@ exports.generateGithubCert = async (req, res) => {
             projectOwner: req.params.owner,
             commitCount: commits.data.total_count,
             pullRequestCount: pullRequests.data.total_count,
-            images: [
-                'https://cdn-icons-png.flaticon.com/512/25/25231.png',
-                repo.owner.avatar_url,
-                user._json.avatar_url
-            ]
+            images
         });
         return res.status(200).json({
             certificate
