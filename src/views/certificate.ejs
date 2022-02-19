@@ -53,12 +53,12 @@
             </center> 
             <div class="flex-container">
                 <div>
-                    <img class="icon-qr" src="https://chart.googleapis.com/chart?chs=177x177&cht=qr&chl=<%= data.verifyAt %>"/><br/>
+                    <a href="<%= data.verifyAt %>"><img class="icon-qr" src="https://chart.googleapis.com/chart?chs=177x177&cht=qr&chl=<%= data.verifyAt %>"/><br/></a>
                     <p style="color: #4a6ffd; text-align: center;font-size: 1rem;">Scan to verify</p>
                 </div>
                 <div style="padding-top: 75px;">
-                    <% for(var loop=0; loop < data.images.length; loop++) { %>
-                        <img class="icon" src="<%= data.images[loop] %>"/>
+                    <% for(var loop=0; loop < data.images.length; loop++) { %></a>
+                        <a href="<%= data.images[loop].url %>"><img class="icon" src="<%= data.images[loop].src %>"/></a>
                      <% } %>
                 </div>
             </div>
