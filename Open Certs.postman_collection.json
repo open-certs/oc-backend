@@ -1,0 +1,41 @@
+{
+	"info": {
+		"_postman_id": "abc2c677-d134-48ba-9405-ed8f6c260381",
+		"name": "Open Certs",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Generate Github Cert",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{auth_token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:4000/certificate/github/Shubham-Kumar-2000/protocol-registry",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"certificate",
+						"github",
+						"Shubham-Kumar-2000",
+						"protocol-registry"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
