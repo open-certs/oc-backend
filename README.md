@@ -4,7 +4,7 @@
 
 > This includes the backend server for Open-Certs.
 
-After seeing so many open-source projects being monetized without giving any recoginations to contributors, Open-Certs comes with the vision to certify every open-source contributions.
+After seeing so many open-source projects being monetized without giving any recognition to contributors, Open-Certs comes with the vision to certify every open-source contribution.
 
 Open-Certs backend is based on RESTFULL arch. as of now. It mainly takes adavntage of `Node.js`, `MongoDB`, `ExpressJS`, `EJS` (as tampelate engine), etc. to deliver the required services to [Open-Certs-Frontend](https://github.com/open-certs/oc-frontend)
 
