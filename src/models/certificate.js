@@ -8,7 +8,16 @@ const CertificateSchema = new mongoose.Schema(
         projectOwner: String,
         commitCount: Number,
         pullRequestCount: Number,
-        images: { type: [String], default: [] }
+        images: {
+            type: [
+                {
+                    src: String,
+                    url: String
+                }
+            ],
+            default: [],
+            _id: false
+        }
     },
     { timestamps: true },
     { collection: 'certificates' }

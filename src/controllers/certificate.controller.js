@@ -46,10 +46,16 @@ exports.generateGithubCert = async (req, res) => {
         const images = [constants.GITHUB_LOGO];
         // console.log(req.body);
         if (req.body.includeRepositoryImage) {
-            images.push(repo.owner.avatar_url);
+            images.push({
+                src: repo.owner.avatar_url,
+                url: repo.html_url
+            });
         }
         if (req.body.includeUserImage) {
-            images.push(user._json.avatar_url);
+            images.push({
+                src: user._json.avatar_url,
+                url: user.profileUrl
+            });
         }
         const certificate = await CertificateSchema.create({
             userGithubId: user.username,
