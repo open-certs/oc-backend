@@ -1,7 +1,8 @@
 const {
     getGithubRepo,
     getCommits,
-    getPullRequests
+    getPullRequests,
+    getLastCommits
 } = require('../helpers/github.helper');
 const ejs = require('ejs');
 const path = require('path');
@@ -33,9 +34,10 @@ exports.generateGithubCert = async (req, res) => {
         if (repo.source) {
             throw new Error("Certificate can't be generated for forks");
         }
-        const [commits, pullRequests] = await Promise.all([
+        const [commits, pullRequests, lastCommit] = await Promise.all([
             getCommits(user.accessToken, req.params.owner, req.params.repo),
-            getPullRequests(user.accessToken, req.params.owner, req.params.repo)
+            getPullRequests(user.accessToken, req.params.owner, req.params.repo),
+            getLastCommits(user.accessToken, req.params.owner, req.params.repo)
         ]);
         if (
             commits.data.total_count == 0 &&
@@ -44,6 +46,12 @@ exports.generateGithubCert = async (req, res) => {
             throw new Error('No commits found by user');
         }
         const images = [constants.GITHUB_LOGO];
+        const lastCommitDate = new Date(lastCommit.repository.defaultBranchRef.target.history.nodes[0].committedDate);
+        const date = [
+                lastCommitDate.getFullYear(),
+                lastCommitDate.getMonth()+1,
+                lastCommitDate.getDate(),
+        ].join('-');
         // console.log(req.body);
         if (req.body.includeRepositoryImage) {
             images.push({
@@ -64,6 +72,7 @@ exports.generateGithubCert = async (req, res) => {
             projectOwner: req.params.owner,
             commitCount: commits.data.total_count,
             pullRequestCount: pullRequests.data.total_count,
+            lastCommitDate: date,
             images
         });
         return res.status(200).json({
