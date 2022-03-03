@@ -34,11 +34,11 @@ exports.generateGithubCert = async (req, res) => {
         if (repo.source) {
             throw new Error("Certificate can't be generated for forks");
         }
-        const [commits, pullRequests, lastCommit] = await Promise.all([
+        const [commits, pullRequests] = await Promise.all([
             getCommits(user.accessToken, req.params.owner, req.params.repo),
-            getPullRequests(user.accessToken, req.params.owner, req.params.repo),
-            getLastCommits(user.accessToken, req.params.owner, req.params.repo)
+            getPullRequests(user.accessToken, req.params.owner, req.params.repo)
         ]);
+        
         if (
             commits.data.total_count == 0 &&
             pullRequests.data.total_count == 0
@@ -46,8 +46,12 @@ exports.generateGithubCert = async (req, res) => {
             throw new Error('No commits found by user');
         }
         const images = [constants.GITHUB_LOGO];
-        const lastCommitDate = lastCommit.repository.defaultBranchRef.target.history.nodes[0].committedDate;
-        // console.log(req.body);
+        let commitArray = commits.data.items;
+        commitArray.sort(function(a,b) {
+            return new Date(a.commit.committer.date) - new Date(b.commit.committer.date);
+        });
+
+        const lastCommitDate = commitArray[commitArray.length - 1].commit.committer.date;
         if (req.body.includeRepositoryImage) {
             images.push({
                 src: repo.owner.avatar_url,
