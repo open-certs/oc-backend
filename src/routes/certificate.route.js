@@ -7,7 +7,12 @@ const certificateValidation = require('../validations/certificate.validation');
 const { validate } = require('../helpers/jwt.helper');
 const router = express.Router();
 
-router.post('/github/:owner/:repo', validate, certificateValidation.create, generateGithubCert);
+router.post(
+    '/github/:owner/:repo',
+    validate,
+    certificateValidation.create,
+    generateGithubCert
+);
 router.get('/:id', getCert);
 
 const certificateRouter = (app) => {
