@@ -8,7 +8,7 @@ const CertificateSchema = new mongoose.Schema(
         projectOwner: String,
         commitCount: Number,
         pullRequestCount: Number,
-        lastCommitDate: String,
+        lastCommitDate: Date,
         images: {
             type: [
                 {
