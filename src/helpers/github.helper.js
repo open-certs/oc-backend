@@ -23,6 +23,35 @@ const getCommits = (auth, owner, repo) => {
     });
 };
 
+const getLastCommits = (auth, owner, repo) => {
+    const kit = getKit(auth);
+    const q = `
+    query { 
+        repository(name: "${repo}", owner: "${owner}") {
+          defaultBranchRef {
+            target {
+              ... on Commit {
+                history(first: 1) {
+                  nodes {
+                    message
+                    committedDate
+                    authoredDate
+                    oid
+                    author {
+                      email
+                      name
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    `
+    return kit.graphql(q);
+};
+
 const getPullRequests = (auth, owner, repo) => {
     const kit = getKit(auth);
     const q = `is:merged is:pr author:@me repo:${owner}/${repo}`;
@@ -35,5 +64,6 @@ const getPullRequests = (auth, owner, repo) => {
 module.exports = {
     getGithubRepo,
     getCommits,
-    getPullRequests
+    getPullRequests,
+    getLastCommits
 };
