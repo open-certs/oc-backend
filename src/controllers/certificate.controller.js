@@ -46,12 +46,7 @@ exports.generateGithubCert = async (req, res) => {
             throw new Error('No commits found by user');
         }
         const images = [constants.GITHUB_LOGO];
-        const lastCommitDate = new Date(lastCommit.repository.defaultBranchRef.target.history.nodes[0].committedDate);
-        const date = [
-                lastCommitDate.getFullYear(),
-                lastCommitDate.getMonth()+1,
-                lastCommitDate.getDate(),
-        ].join('-');
+        const lastCommitDate = lastCommit.repository.defaultBranchRef.target.history.nodes[0].committedDate;
         // console.log(req.body);
         if (req.body.includeRepositoryImage) {
             images.push({
@@ -72,7 +67,7 @@ exports.generateGithubCert = async (req, res) => {
             projectOwner: req.params.owner,
             commitCount: commits.data.total_count,
             pullRequestCount: pullRequests.data.total_count,
-            lastCommitDate: date,
+            lastCommitDate: lastCommitDate,
             images
         });
         return res.status(200).json({
