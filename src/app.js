@@ -4,7 +4,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
-
+const { ValidationError } = require('express-validation');
 const router = require('./routes/index.route');
 
 const app = express();
@@ -33,7 +33,9 @@ app.use(function (err, req, res, _) {
     // set locals, only providing error in development
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
-
+    if (err instanceof ValidationError) {
+        return res.status(200).json({ error: String(err) });
+    }
     // render the error page
     res.status(err.status || 500);
     res.render('error');
