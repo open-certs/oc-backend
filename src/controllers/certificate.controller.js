@@ -1,7 +1,8 @@
 const {
     getGithubRepo,
     getCommits,
-    getPullRequests
+    getPullRequests,
+    getLastCommits
 } = require('../helpers/github.helper');
 const ejs = require('ejs');
 const path = require('path');
@@ -37,6 +38,7 @@ exports.generateGithubCert = async (req, res) => {
             getCommits(user.accessToken, req.params.owner, req.params.repo),
             getPullRequests(user.accessToken, req.params.owner, req.params.repo)
         ]);
+        
         if (
             commits.data.total_count == 0 &&
             pullRequests.data.total_count == 0
@@ -44,7 +46,12 @@ exports.generateGithubCert = async (req, res) => {
             throw new Error('No commits found by user');
         }
         const images = [constants.GITHUB_LOGO];
-        // console.log(req.body);
+        let commitArray = commits.data.items;
+        commitArray.sort(function(a,b) {
+            return new Date(a.commit.committer.date) - new Date(b.commit.committer.date);
+        });
+
+        const lastCommitDate = commitArray[commitArray.length - 1].commit.committer.date;
         if (req.body.includeRepositoryImage) {
             images.push({
                 src: repo.owner.avatar_url,
@@ -64,6 +71,7 @@ exports.generateGithubCert = async (req, res) => {
             projectOwner: req.params.owner,
             commitCount: commits.data.total_count,
             pullRequestCount: pullRequests.data.total_count,
+            lastCommitDate: lastCommitDate,
             images
         });
         return res.status(200).json({

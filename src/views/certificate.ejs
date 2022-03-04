@@ -23,7 +23,7 @@
             flex-direction: row;
             justify-content: space-between;
             align-items: center;
-            margin: 240px 100px 100px 100px;
+            margin: 210px 100px 100px 100px;
         }
         .icon{
             height: 100px;
@@ -47,8 +47,10 @@
                     <div style="font-size: 2.4rem;padding-top: 150px;font-family: 'Roboto Slab', serif;line-height: 55px;">
                         This is to certify that <br/>
                         <span style='color: #e0442c;font-weight: 900;font-size: 3.5rem;'> <%= data.userName%> </span><br/>
-                        has actively contibuted to open source project <b><%= data.projectRepo %></b> of <b><%= data.projectOwner %>.</b>
+                        has actively contibuted to open source project <b><%= data.projectRepo %></b> of <b><%= data.projectOwner %>.</b> 
+                        
                     </div>
+                    <h2><b>Last commit date: </b> <%= data.lastCommitDate.toISOString().split('T').join(' ').slice(0,19) %></h2>
                 </div>
             </center> 
             <div class="flex-container">

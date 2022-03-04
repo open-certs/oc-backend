@@ -35,5 +35,6 @@ const getPullRequests = (auth, owner, repo) => {
 module.exports = {
     getGithubRepo,
     getCommits,
-    getPullRequests
+    getPullRequests,
+    getLastCommits
 };
