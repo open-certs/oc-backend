@@ -34,7 +34,7 @@ app.use(function (err, req, res, _) {
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
     if (err instanceof ValidationError) {
-        res.status(200).json({ error: String(err) });
+        return res.status(200).json({ error: String(err) });
     }
     // render the error page
     res.status(err.status || 500);
