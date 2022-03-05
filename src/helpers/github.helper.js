@@ -16,7 +16,7 @@ const getGithubRepo = (auth, owner, repo) => {
 
 const getCommits = (auth, owner, repo) => {
     const kit = getKit(auth);
-    const q = `author:@me repo:${owner}/${repo}`;
+    const q = `author:@me repo:${owner}/${repo} sort:committer-date-desc`;
     // console.log(q);
     return kit.rest.search.commits({
         q
@@ -25,7 +25,7 @@ const getCommits = (auth, owner, repo) => {
 
 const getPullRequests = (auth, owner, repo) => {
     const kit = getKit(auth);
-    const q = `is:merged is:pr author:@me repo:${owner}/${repo}`;
+    const q = `is:merged is:pr author:@me repo:${owner}/${repo} sort:created-desc`;
     // console.log(q);
     return kit.rest.search.issuesAndPullRequests({
         q
@@ -35,6 +35,5 @@ const getPullRequests = (auth, owner, repo) => {
 module.exports = {
     getGithubRepo,
     getCommits,
-    getPullRequests,
-    getLastCommits
+    getPullRequests
 };

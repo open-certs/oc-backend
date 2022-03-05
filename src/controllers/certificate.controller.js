@@ -1,13 +1,24 @@
 const {
     getGithubRepo,
     getCommits,
-    getPullRequests,
-    getLastCommits
+    getPullRequests
 } = require('../helpers/github.helper');
 const ejs = require('ejs');
 const path = require('path');
-const CertificateSchema = require('../models/certificate');
+const CertificateSchema = require('../models/certificate.model');
 const constants = require('../config/constants');
+
+const getLastContributionDate = (latestCommit, latestPullRequest) => {
+    if (!latestCommit) {
+        return latestPullRequest;
+    }
+    if (!latestPullRequest) {
+        return latestCommit;
+    }
+    latestCommit = new Date(latestCommit);
+    latestPullRequest = new Date(latestPullRequest);
+    return latestCommit > latestPullRequest ? latestCommit : latestPullRequest;
+};
 
 exports.generateGithubCert = async (req, res) => {
     try {
@@ -38,20 +49,21 @@ exports.generateGithubCert = async (req, res) => {
             getCommits(user.accessToken, req.params.owner, req.params.repo),
             getPullRequests(user.accessToken, req.params.owner, req.params.repo)
         ]);
-        
+
         if (
             commits.data.total_count == 0 &&
             pullRequests.data.total_count == 0
         ) {
             throw new Error('No commits found by user');
         }
-        const images = [constants.GITHUB_LOGO];
-        let commitArray = commits.data.items;
-        commitArray.sort(function(a,b) {
-            return new Date(a.commit.committer.date) - new Date(b.commit.committer.date);
-        });
 
-        const lastCommitDate = commitArray[commitArray.length - 1].commit.committer.date;
+        const images = [constants.GITHUB_LOGO];
+
+        const lastContributionDate = getLastContributionDate(
+            commits.data.items[0]?.commit?.committer?.date,
+            pullRequests.data.items[0]?.created_at
+        );
+
         if (req.body.includeRepositoryImage) {
             images.push({
                 src: repo.owner.avatar_url,
@@ -71,7 +83,7 @@ exports.generateGithubCert = async (req, res) => {
             projectOwner: req.params.owner,
             commitCount: commits.data.total_count,
             pullRequestCount: pullRequests.data.total_count,
-            lastCommitDate: lastCommitDate,
+            lastContributionDate,
             images
         });
         return res.status(200).json({
