@@ -17,7 +17,15 @@ passport.use(
             callbackURL: `${process.env.BASE_URL}/auth/github/callback`
         },
         function (accessToken, refreshToken, profile, done) {
-            done(null, { accessToken, ...profile, kind: 'github' });
+            done(null, {
+                accessToken,
+                email: profile.email,
+                name: profile.displayName,
+                username: profile.username,
+                profileUrl: profile.profileUrl,
+                avatar: profile.photos[0].value,
+                kind: 'github'
+            });
         }
     )
 );

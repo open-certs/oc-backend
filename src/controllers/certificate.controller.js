@@ -72,7 +72,7 @@ exports.generateGithubCert = async (req, res) => {
         }
         if (req.body.includeUserImage) {
             images.push({
-                src: user._json.avatar_url,
+                src: user.avatar,
                 url: user.profileUrl
             });
         }
