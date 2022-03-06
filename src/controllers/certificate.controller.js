@@ -5,7 +5,7 @@ const {
 } = require('../helpers/github.helper');
 const ejs = require('ejs');
 const path = require('path');
-const CertificateSchema = require('../models/certificate.model');
+const Certificate = require('../models/certificate.model');
 const constants = require('../config/constants');
 
 const getLastContributionDate = (latestCommit, latestPullRequest) => {
@@ -76,7 +76,7 @@ exports.generateGithubCert = async (req, res) => {
                 url: user.profileUrl
             });
         }
-        const certificate = await CertificateSchema.create({
+        const certificate = await Certificate.create({
             userGithubId: user.username,
             userName: user.displayName,
             projectRepo: req.params.repo,
@@ -102,9 +102,7 @@ exports.generateGithubCert = async (req, res) => {
 
 exports.getCert = async (req, res) => {
     try {
-        const certificate = await CertificateSchema.findById(
-            req.params.id
-        ).lean();
+        const certificate = await Certificate.getById(req.params.id).lean();
         if (!certificate) {
             throw new Error('Invalid Certificate Id');
         }
@@ -127,6 +125,22 @@ exports.getCert = async (req, res) => {
         console.log(e);
         res.render('error', {
             message: String(e)
+        });
+    }
+};
+
+exports.getCertDetails = async (req, res) => {
+    try {
+        const cert_id = req.params.id;
+
+        const certificate = await Certificate.getById(cert_id);
+
+        res.status(200).json({
+            certificate
+        });
+    } catch (e) {
+        res.status(400).json({
+            error: String(e)
         });
     }
 };
