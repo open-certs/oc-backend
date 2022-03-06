@@ -22,5 +22,9 @@ const CertificateSchema = new mongoose.Schema(
     { collection: 'certificates' }
 );
 
+CertificateSchema.statics.getById = (_id) => {
+    return Certificate.findOne({ _id });
+};
+
 const Certificate = mongoose.model('certificates', CertificateSchema);
 module.exports = Certificate;
