@@ -41,7 +41,15 @@ passport.use(
         
     },
     function (accessToken, refreshToken, profile, done) {
-        done(null, { accessToken, ...profile, kind: 'bitbucket' });
+        done(null, { 
+            accessToken,
+            email: "",
+            name: profile.displayName,
+            username: profile.username,
+            profileUrl: profile.profileUrl,
+            avatar: profile._json.links.avatar.href,
+            kind: 'bitbucket' 
+        });
     })
 );
 
