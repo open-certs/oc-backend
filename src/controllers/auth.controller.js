@@ -3,7 +3,6 @@ const { sign } = require('../helpers/jwt.helper');
 exports.login = (req, res) => {
     try {
         const user = req.user;
-        delete user._raw;
         const token = sign(user);
         delete user.accessToken;
         return res.redirect(

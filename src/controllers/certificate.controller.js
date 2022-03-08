@@ -5,8 +5,20 @@ const {
 } = require('../helpers/github.helper');
 const ejs = require('ejs');
 const path = require('path');
-const CertificateSchema = require('../models/certificate');
+const Certificate = require('../models/certificate.model');
 const constants = require('../config/constants');
+
+const getLastContributionDate = (latestCommit, latestPullRequest) => {
+    if (!latestCommit) {
+        return latestPullRequest;
+    }
+    if (!latestPullRequest) {
+        return latestCommit;
+    }
+    latestCommit = new Date(latestCommit);
+    latestPullRequest = new Date(latestPullRequest);
+    return latestCommit > latestPullRequest ? latestCommit : latestPullRequest;
+};
 
 exports.generateGithubCert = async (req, res) => {
     try {
@@ -37,14 +49,21 @@ exports.generateGithubCert = async (req, res) => {
             getCommits(user.accessToken, req.params.owner, req.params.repo),
             getPullRequests(user.accessToken, req.params.owner, req.params.repo)
         ]);
+
         if (
             commits.data.total_count == 0 &&
             pullRequests.data.total_count == 0
         ) {
             throw new Error('No commits found by user');
         }
+
         const images = [constants.GITHUB_LOGO];
-        // console.log(req.body);
+
+        const lastContributionDate = getLastContributionDate(
+            commits.data.items[0]?.commit?.committer?.date,
+            pullRequests.data.items[0]?.created_at
+        );
+
         if (req.body.includeRepositoryImage) {
             images.push({
                 src: repo.owner.avatar_url,
@@ -53,17 +72,18 @@ exports.generateGithubCert = async (req, res) => {
         }
         if (req.body.includeUserImage) {
             images.push({
-                src: user._json.avatar_url,
+                src: user.avatar,
                 url: user.profileUrl
             });
         }
-        const certificate = await CertificateSchema.create({
+        const certificate = await Certificate.create({
             userGithubId: user.username,
             userName: user.displayName,
             projectRepo: req.params.repo,
             projectOwner: req.params.owner,
             commitCount: commits.data.total_count,
             pullRequestCount: pullRequests.data.total_count,
+            lastContributionDate,
             images
         });
         return res.status(200).json({
@@ -82,9 +102,7 @@ exports.generateGithubCert = async (req, res) => {
 
 exports.getCert = async (req, res) => {
     try {
-        const certificate = await CertificateSchema.findById(
-            req.params.id
-        ).lean();
+        const certificate = await Certificate.getById(req.params.id).lean();
         if (!certificate) {
             throw new Error('Invalid Certificate Id');
         }
@@ -107,6 +125,22 @@ exports.getCert = async (req, res) => {
         console.log(e);
         res.render('error', {
             message: String(e)
+        });
+    }
+};
+
+exports.getCertDetails = async (req, res) => {
+    try {
+        const cert_id = req.params.id;
+
+        const certificate = await Certificate.getById(cert_id);
+
+        res.status(200).json({
+            certificate
+        });
+    } catch (e) {
+        res.status(400).json({
+            error: String(e)
         });
     }
 };

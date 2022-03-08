@@ -1,5 +1,6 @@
 const passport = require('passport');
 const GitHubStrategy = require('passport-github2');
+const BitbucketStrategy = require('passport-bitbucket-oauth2').Strategy;
 
 passport.serializeUser(function (user, done) {
     done(null, user);
@@ -17,9 +18,31 @@ passport.use(
             callbackURL: `${process.env.BASE_URL}/auth/github/callback`
         },
         function (accessToken, refreshToken, profile, done) {
-            done(null, { accessToken, ...profile, kind: 'github' });
+            done(null, {
+                accessToken,
+                email: profile.email,
+                name: profile.displayName,
+                username: profile.username,
+                profileUrl: profile.profileUrl,
+                avatar: profile.photos[0].value,
+                kind: 'github'
+            });
         }
     )
+);
+
+passport.use(
+    new BitbucketStrategy({
+        callbackURL:`${process.env.BASE_URL}/auth/bitbucket/callback`,
+        clientID: process.env.BITBUCKET_CLIENT_ID,
+        clientSecret: process.env.BITBUCKET_CLIENT_SECRET,
+        profileWithEmail: true,
+        apiVersion: '2.0'
+        
+    },
+    function (accessToken, refreshToken, profile, done) {
+        done(null, { accessToken, ...profile, kind: 'bitbucket' });
+    })
 );
 
 module.exports = passport;
