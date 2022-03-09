@@ -12,5 +12,12 @@ module.exports = {
         'user:email',
         'read:org',
         'repo'
+    ],
+    
+    BITBUCKET_SCOPES: [
+        'repository',
+        'account',
+        'email'
     ]
+    
 };
