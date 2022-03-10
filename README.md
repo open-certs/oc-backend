@@ -36,6 +36,8 @@ npm run dev
 ## Documentation
 - To get the documention of rest apis import `Open Certs.postman_collection.json` into Postman.
 
+## Github setup
+- You can find detailed explanation in `docs` folder, file name`GITHUB_SETUP.md` 
 ## Contributing
 
 Any contributions you make are **greatly appreciated**.
