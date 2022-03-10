@@ -1,6 +1,6 @@
-require('./enviroment.test');
+require('../enviroment.test');
 
-const auth = require('../src/controllers/auth.controller');
+const auth = require('../../src/controllers/auth.controller');
 
 test('should return valid jwt token when recieved verified github user', async () => {
     const mReq = {

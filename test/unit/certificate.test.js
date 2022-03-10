@@ -1,8 +1,8 @@
-require('./enviroment.test');
-require('./database.test');
+require('../enviroment.test');
+require('../database.test');
 const { Types } = require('mongoose');
-const certificateController = require('../src/controllers/certificate.controller');
-const Certificate = require('../src/models/certificate.model');
+const certificateController = require('../../src/controllers/certificate.controller');
+const Certificate = require('../../src/models/certificate.model');
 
 test('should return certificate details when valid certificate id is provided', async () => {
     const existingCertificate = await Certificate.findOne({});
