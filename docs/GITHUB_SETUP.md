@@ -11,6 +11,6 @@
 	- Authorization callback URL : http://localhost:4000/auth/github/callback
 	- Click on **Register application**
 	- It will take you to page where you find **Client ID** and you will click on **Generate a new client secret**
-## setup your `.env` file 
+## Setup your `.env` file 
 - Replace `XX` in `GITHUB_CLIENT_ID=XX` to **Client ID** we got it
 - Replace `XX` in `GITHUB_CLIENT_SECRET=XX` to **Client secrets** we generated it
