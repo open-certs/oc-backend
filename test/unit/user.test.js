@@ -1,6 +1,6 @@
-require('./enviroment.test');
+require('../enviroment.test');
 
-const user = require('../src/controllers/user.controler');
+const user = require('../../src/controllers/user.controler');
 
 test('should return profile when called with proper token', async () => {
     const mReq = {

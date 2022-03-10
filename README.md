@@ -32,6 +32,8 @@ Or use the following command to run the server in development mode:
 ```
 npm run dev
 ```
+## Github setup
+- You can find detailed explanation in `docs` folder, file name`GITHUB_SETUP.md` 
 
 ## Documentation
 - To get the documention of rest apis import `Open Certs.postman_collection.json` into Postman.
