@@ -13,11 +13,8 @@ module.exports = {
         'read:org',
         'repo'
     ],
-    
-    BITBUCKET_SCOPES: [
-        'repository',
-        'account',
-        'email'
-    ]
-    
+
+    BITBUCKET_SCOPES: ['repository', 'account', 'email'],
+
+    GITLAB_SCOPES: ['read_api']
 };
