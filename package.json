@@ -11,6 +11,8 @@
     "dev": "nodemon ./bin/www",
     "test": "jest test/",
     "format": "eslint . --fix",
+    "checkFormat": "eslint .",
+    "quality": "npm run checkFormat && npm run test -- --silent",
     "prepare": "husky install"
   },
   "dependencies": {
@@ -40,6 +42,7 @@
     "eslint-plugin-prettier": "^4.0.0",
     "husky": "^7.0.0",
     "jest": "^27.5.1",
+    "newman": "^5.3.2",
     "nodemon": "^2.0.15",
     "prettier": "^2.5.1"
   }
