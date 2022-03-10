@@ -38,8 +38,9 @@
         <img src = "https://user-images.githubusercontent.com/41825906/153724469-5b2f41be-e317-4ba8-88fb-b2832aab507a.png"
             style = "height: 100% ;width: 100% ;padding: 0px;margin: 0px;	" > 
         </img> 
-        <div style = "position: absolute;top: 0;left: 0;height: 1155px;width: 1500px;padding: 0px;margin: 0px;">
-            <div style="position: absolute; right: 50px; margin: 10px; color: rgb(224 68 44); font-family: monospace;">Certified On: <%= data.createdAt.toISOString().split('T').join(' ').slice(0,19) %></div>
+        <div style = "position: absolute;top: 0;left: 0;height: 1155px;width: 1500px;padding: 0px;margin: 0px;">   
+            <div style="position: absolute; right: 50px; margin: 10px;color: rgb(224 68 44); font-family: monospace;">
+                Certified On: <%= data.createdAt.toISOString().split('T').join(' ').slice(0,19) %></div>
             <center>
                 <h1 style="max-width: 50%;font-size: 6rem;padding-top: 100px;" class="text-bg">Certificate</h1>
                 <h2 style="max-width: 50%;font-size: 4.5rem;" class="text-bg">of Contribution</h2>
@@ -62,8 +63,11 @@
                     <% for(var loop=0; loop < data.images.length; loop++) { %></a>
                         <a href="<%= data.images[loop].url %>"><img class="icon" src="<%= data.images[loop].src %>"/></a>
                      <% } %>
-                </div>
-            </div>
-        </div>
+                </div>                
+            </div>   
+            <div style="position: absolute; left: 4%; margin:0%; bottom: 1.2%;color: rgb(224 68 44); font-family: monospace;font-weight:600;font-size:1rem">
+                Certificate Id:  <%= (data._id).toString().match(new RegExp('.{1,5}', 'g')).join("-"); %>                     
+            </div>        
+        </div>            
     </div>
 </div>
