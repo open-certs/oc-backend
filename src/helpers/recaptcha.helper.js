@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-exports.ValidateCaptcha = (req, res, next) => {
+exports.validateReCaptcha = (req, res, next) => {
     const token = req.headers['recaptcha'];
     if (process.env.VALIDATE_RECAPTCHA == 'NO') {
         return next();

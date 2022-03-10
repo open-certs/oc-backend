@@ -1,4 +1,5 @@
 require('./enviroment.test');
+
 const mongoose = require('mongoose');
 beforeAll(() => require('../src/models/index.model').connect());
 
