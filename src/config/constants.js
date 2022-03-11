@@ -14,5 +14,7 @@ module.exports = {
         'repo'
     ],
 
-    BITBUCKET_SCOPES: ['repository', 'account', 'email']
+    BITBUCKET_SCOPES: ['repository', 'account', 'email'],
+
+    GITLAB_SCOPES: ['read_api']
 };
