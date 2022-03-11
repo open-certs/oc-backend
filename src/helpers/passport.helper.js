@@ -1,6 +1,7 @@
 const passport = require('passport');
 const GitHubStrategy = require('passport-github2');
 const BitbucketStrategy = require('passport-bitbucket-oauth2').Strategy;
+const GitlabStrategy = require('passport-gitlab2');
 
 passport.serializeUser(function (user, done) {
     done(null, user);
@@ -49,6 +50,27 @@ passport.use(
                 profileUrl: profile.profileUrl,
                 avatar: profile._json.links.avatar.href,
                 kind: 'bitbucket'
+            });
+        }
+    )
+);
+
+passport.use(
+    new GitlabStrategy(
+        {
+            clientID: process.env.GITLAB_CLIENT_ID,
+            clientSecret: process.env.GITLAB_CLIENT_SECRET,
+            callbackURL: `${process.env.BASE_URL}/auth/gitlab/callback`
+        },
+        function (accessToken, refreshToken, profile, done) {
+            done(null, {
+                accessToken,
+                email: profile.emails[0].value,
+                name: profile.displayName,
+                username: profile.username,
+                profileUrl: profile.profileUrl,
+                avatar: profile.avatarUrl,
+                kind: 'gitlab'
             });
         }
     )
