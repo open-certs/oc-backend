@@ -6,7 +6,46 @@ const logger = require('morgan');
 const cors = require('cors');
 const { ValidationError } = require('express-validation');
 const router = require('./routes/index.route');
+const { login } = require('./controllers/auth.controller');
+const { getSystemErrorName } = require('util');
 
+window.onerror = function (msg, url, lineNO, columnNo, error) {
+    var string = msg.toLowerCase();
+    var substring = 'script error';
+    if (string.indexOf(substring) > -1) {
+        alert('Script Error: See Browser console for Detail');
+    } else {
+        var message = [
+            'Message : ' + msg,
+            'URL : ' + url,
+            'Line : ' + lineNO,
+            'Column : ' + columnNo,
+            'Error Object: ' + JSON.stringify(error)
+        ].join('-');
+        alert(message);
+    }
+    return false;
+};
+try {
+    ValidationError();
+} catch (error) {
+    console.log(error);
+}
+try {
+    login();
+} catch (error) {
+    console.log(error);
+}
+try {
+    SyntaxError();
+} catch (error) {
+    console.log(error);
+}
+try {
+    getSystemErrorName();
+} catch (error) {
+    console.log(error);
+}
 const app = express();
 app.use(cors());
 
