@@ -1,10 +1,10 @@
-require('dotenv').config({ path: '.env' });
+const cluster = require('cluster');
+const numCPUs = require('os').cpus().length;
 
-module.exports = function clusterise() {
-    if (process.env.cluster == 'yes') {
-        const cluster = require('cluster');
-        const numCPUs = require('os').cpus().length;
-
+exports.clusterise = () => {
+    const status = { clusterised: false, isMaster: cluster.isMaster };
+    if (process.env.cluster == 'YES') {
+        status.clusterised = true;
         if (cluster.isMaster) {
             console.log(
                 'Starting app in cluster mode with ' + numCPUs + ' workers'
@@ -21,12 +21,7 @@ module.exports = function clusterise() {
                 console.log('Starting new worker');
                 cluster.fork();
             });
-
-            return { clusterise: true, isMaster: true };
-        } else {
-            return { clusterise: true, isMaster: false };
         }
-    } else {
-        return { clusterise: false };
     }
+    return status;
 };

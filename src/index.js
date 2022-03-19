@@ -1,5 +1,3 @@
-require('dotenv').config({ path: '.env' });
-require('./models/index.model').connect();
 const app = require('./app');
 const http = require('http');
 
