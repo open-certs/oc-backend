@@ -8,6 +8,21 @@ on:
     branches: [ main, ci-cd ]
   pull_request:
     branches: [ main, ci-cd ]
+env:
+  CI: true
+  MONGO_DB_URI: http://localhost:27017/open-certs
+  CLUSTER: yes
+  FRONTEND_URL: http://localhost:3000
+  TOKEN_SECRET: XX
+  GITHUB_CLIENT_ID: XX
+  GITHUB_CLIENT_SECRET: XX
+  BITBUCKET_CLIENT_ID: XX
+  BITBUCKET_CLIENT_SECRET: XX
+  GITLAB_CLIENT_ID: XX
+  GITLAB_CLIENT_SECRET: XX
+  RECAPTCHA_SECRECT_KEY: XX
+  VALIDATE_RECAPTCHA: YES
+  TEST: YES
 
 jobs:
   build:
@@ -30,21 +45,6 @@ jobs:
       uses: supercharge/mongodb-github-action@1.7.0
       with:
         mongodb-version: ${{ matrix.mongodb-version }}
-    - env:
-        CI: true
-        MONGO_DB_URI: http://localhost:27017/open-certs
-        CLUSTER: yes
-        FRONTEND_URL: http://localhost:3000
-        TOKEN_SECRET: XX
-        GITHUB_CLIENT_ID: XX
-        GITHUB_CLIENT_SECRET: XX
-        BITBUCKET_CLIENT_ID: XX
-        BITBUCKET_CLIENT_SECRET: XX
-        GITLAB_CLIENT_ID: XX
-        GITLAB_CLIENT_SECRET: XX
-        RECAPTCHA_SECRECT_KEY: XX
-        VALIDATE_RECAPTCHA: YES
-        TEST: YES
     - run: npm ci
     - run: npm run build --if-present
     - run: npm run quality
