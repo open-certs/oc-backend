@@ -5,7 +5,7 @@
 
   
 
-2. After login (or register incase you donot have account) there will be a page in top of it **Deploy a cloud database** with 3 options (Serverless - Dedicated - Shared) you will choose **Shared** option
+2. After login (or register in case you don't have account) there will be a page in top of it **Deploy a cloud database** with 3 options (Serverless - Dedicated - Shared) you will choose **Shared** option
 
   
 
@@ -40,7 +40,7 @@
 
   
 
-11. You will also change the **myFirstDatabase** in the same url with name of the app you have set it (incase you don't set name for the app it will be by default **Project 0**)
+11. You will also change the **myFirstDatabase** in the same url with name of the app you have set it (in case you don't set name for the app it will be by default **Project 0**)
 
   
 
