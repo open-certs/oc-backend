@@ -6,36 +6,244 @@
 	},
 	"item": [
 		{
-			"name": "Generate Github Cert",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{auth_token}}",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "http://localhost:4000/certificate/github/Shubham-Kumar-2000/protocol-registry",
-					"protocol": "http",
-					"host": [
-						"localhost"
+			"name": "auth",
+			"item": [
+				{
+					"name": "Github Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Github-Redirected\",()=>{\r",
+									"    pm.expect(pm.response.headers.get('server').toLowerCase()).eq(\"github.com\")\r",
+									"    pm.expect(pm.response.code).eq(200)\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
 					],
-					"port": "4000",
-					"path": [
-						"certificate",
-						"github",
-						"Shubham-Kumar-2000",
-						"protocol-registry"
-					]
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/auth/github",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"github"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Gitlab Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var cheerio = require(\"cheerio\")\r",
+									"pm.test(\"Gitlab-Redirected\",()=>{\r",
+									"    pm.expect(pm.response.headers.get('server').toLowerCase()).eq(\"cloudflare\")\r",
+									"    pm.expect(pm.response.code).eq(503)\r",
+									"    const $ = cheerio.load(pm.response.text())\r",
+									"    pm.expect($(\"title\").text().includes(\"GitLab\")).eq(true)\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/auth/gitlab",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"gitlab"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Bitbucket Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var cheerio = require(\"cheerio\")\r",
+									"pm.test(\"Bitbucket-Redirected\",()=>{\r",
+									"    pm.expect(pm.response.headers.get('server').toLowerCase()).eq(\"globaledge-envoy\")\r",
+									"    pm.expect(pm.response.code).eq(200)\r",
+									"    const $ = cheerio.load(pm.response.text())\r",
+									"    pm.expect($(\"title\").text().includes(\"Atlassian\")).eq(true)\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/auth/bitbucket",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"bitbucket"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
+		},
+		{
+			"name": "Certificate",
+			"item": [
+				{
+					"name": "Generate Github Cert",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:4000/certificate/github/kaushik-rishi/rocketcp",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"certificate",
+								"github",
+								"kaushik-rishi",
+								"rocketcp"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Fetch Certificate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const res = pm.response.json()\r",
+									"pm.test(\"should return Certificate when called with valid certificateID\",()=>{\r",
+									"    pm.expect(res.error).eq(undefined);\r",
+									"    pm.expect(res.certificate).not.eq(undefined);\r",
+									"    pm.expect(res.certificate._id).eq(pm.environment.get(\"certificateId\"));\r",
+									"    pm.expect(pm.response.code).eq(200)\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:4000/certificate/certDetails/{{certificateId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"certificate",
+								"certDetails",
+								"{{certificateId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Profile",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const res = pm.response.json()\r",
+									"pm.test(\"should return User Profile when called with auth token\",()=>{\r",
+									"    pm.expect(res.error).eq(undefined);\r",
+									"    pm.expect(res.user).not.eq(undefined);\r",
+									"    pm.expect(pm.response.code).eq(200)\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/users/me",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"me"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }
