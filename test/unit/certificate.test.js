@@ -5,10 +5,20 @@ const certificateController = require('../../src/controllers/certificate.control
 const Certificate = require('../../src/models/certificate.model');
 
 test('should return certificate details when valid certificate id is provided', async () => {
-    const existingCertificate = await Certificate.findOne({});
+    const certificate = new Certificate({
+        userGithubId: "test-open-certs-userId",
+        userName: "test-open-certs-userId",
+        projectRepo: "open-certs",
+        projectOwner: "open-certs",
+        commitCount: 0,
+        pullRequestCount: 0,
+        lastContributionDate: new Date(),
+        images: []
+    })
+    await certificate.save();    
     const mReq = {
         params: {
-            id: String(existingCertificate._id)
+            id: String(certificate._id)
         }
     };
     const mRes = {
@@ -17,7 +27,7 @@ test('should return certificate details when valid certificate id is provided', 
             expect(x).toBeTruthy();
             expect(x.error).toBeUndefined();
             expect(String(x.certificate._id)).toBe(
-                String(existingCertificate._id)
+                String(certificate._id)
             );
         })
     };
