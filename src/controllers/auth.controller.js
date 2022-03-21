@@ -1,6 +1,6 @@
 const { sign } = require('../helpers/jwt.helper');
 
-exports.login = (req, res) => {
+exports.login = (req, res, next) => {
     try {
         const user = req.user;
         const token = sign(user);
@@ -13,9 +13,6 @@ exports.login = (req, res) => {
         //     token
         // });
     } catch (e) {
-        console.log(e);
-        res.status(200).json({
-            error: String(e)
-        });
+        next(e);
     }
 };

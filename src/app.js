@@ -1,51 +1,12 @@
-const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
-const { ValidationError } = require('express-validation');
 const router = require('./routes/index.route');
-const { login } = require('./controllers/auth.controller');
-const { getSystemErrorName } = require('util');
+const { errorHandler } = require('./helpers/errorhandler.helper');
+const NotFoundError = require('./errors/notFound.error');
 
-window.onerror = function (msg, url, lineNO, columnNo, error) {
-    var string = msg.toLowerCase();
-    var substring = 'script error';
-    if (string.indexOf(substring) > -1) {
-        alert('Script Error: See Browser console for Detail');
-    } else {
-        var message = [
-            'Message : ' + msg,
-            'URL : ' + url,
-            'Line : ' + lineNO,
-            'Column : ' + columnNo,
-            'Error Object: ' + JSON.stringify(error)
-        ].join('-');
-        alert(message);
-    }
-    return false;
-};
-try {
-    ValidationError();
-} catch (error) {
-    console.log(error);
-}
-try {
-    login();
-} catch (error) {
-    console.log(error);
-}
-try {
-    SyntaxError();
-} catch (error) {
-    console.log(error);
-}
-try {
-    getSystemErrorName();
-} catch (error) {
-    console.log(error);
-}
 const app = express();
 app.use(cors());
 
@@ -63,21 +24,11 @@ router(app);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-    next(createError(404));
+    next(new NotFoundError('API not found'));
 });
 
 // error handler
 // eslint-disable-next-line no-unused-vars
-app.use(function (err, req, res, _) {
-    // set locals, only providing error in development
-    res.locals.message = err.message;
-    res.locals.error = req.app.get('env') === 'development' ? err : {};
-    if (err instanceof ValidationError) {
-        return res.status(200).json({ error: String(err) });
-    }
-    // render the error page
-    res.status(err.status || 500);
-    res.render('error');
-});
+app.use(errorHandler);
 
 module.exports = app;

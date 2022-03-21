@@ -7,7 +7,8 @@ const ejs = require('ejs');
 const path = require('path');
 const Certificate = require('../models/certificate.model');
 const constants = require('../config/constants');
-
+const NotFoundError = require('../errors/notFound.error');
+const CustomError = require('../errors/custom.error');
 const getLastContributionDate = (latestCommit, latestPullRequest) => {
     if (!latestCommit) {
         return latestPullRequest;
@@ -20,7 +21,7 @@ const getLastContributionDate = (latestCommit, latestPullRequest) => {
     return latestCommit > latestPullRequest ? latestCommit : latestPullRequest;
 };
 
-exports.generateGithubCert = async (req, res) => {
+exports.generateGithubCert = async (req, res, next) => {
     try {
         const user = req.user;
         // console.log(user);
@@ -30,20 +31,22 @@ exports.generateGithubCert = async (req, res) => {
             req.params.repo
         );
         if (!repo) {
-            throw new Error('Repo not found');
+            throw new NotFoundError('Repo not found');
         }
         repo = repo.data;
 
         if (repo.private || repo.visibility !== 'public') {
-            throw new Error("Certificate can't be generated for private repos");
+            throw new CustomError(
+                "Certificate can't be generated for private repos"
+            );
         }
         if (repo.archived) {
-            throw new Error(
+            throw new CustomError(
                 "Certificate can't be generated for archived repos"
             );
         }
         if (repo.source) {
-            throw new Error("Certificate can't be generated for forks");
+            throw new CustomError("Certificate can't be generated for forks");
         }
         const [commits, pullRequests] = await Promise.all([
             getCommits(user.accessToken, req.params.owner, req.params.repo),
@@ -54,7 +57,7 @@ exports.generateGithubCert = async (req, res) => {
             commits.data.total_count == 0 &&
             pullRequests.data.total_count == 0
         ) {
-            throw new Error('No commits found by user');
+            throw new CustomError('No commits found by user');
         }
 
         const images = [constants.GITHUB_LOGO];
@@ -93,18 +96,15 @@ exports.generateGithubCert = async (req, res) => {
             // pullRequests
         });
     } catch (e) {
-        console.log(e);
-        res.status(200).json({
-            error: String(e)
-        });
+        next(e);
     }
 };
 
-exports.getCert = async (req, res) => {
+exports.getCert = async (req, res, next) => {
     try {
         const certificate = await Certificate.getById(req.params.id).lean();
         if (!certificate) {
-            throw new Error('Invalid Certificate Id');
+            throw new NotFoundError('Invalid Certificate Id');
         }
         // console.log({
         //     ...certificate,
@@ -122,25 +122,23 @@ exports.getCert = async (req, res) => {
             )
         });
     } catch (e) {
-        console.log(e);
-        res.render('error', {
-            message: String(e)
-        });
+        next(e);
     }
 };
 
-exports.getCertDetails = async (req, res) => {
+exports.getCertDetails = async (req, res, next) => {
     try {
         const cert_id = req.params.id;
 
         const certificate = await Certificate.getById(cert_id);
+        if (!certificate) {
+            throw new NotFoundError('Invalid Certificate Id');
+        }
 
         res.status(200).json({
             certificate
         });
     } catch (e) {
-        res.status(400).json({
-            error: String(e)
-        });
+        next(e);
     }
 };
