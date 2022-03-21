@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const configConsts = require('../config/constants');
+const CustomError = require('../errors/custom.error');
 
 exports.sign = (payload) => {
     return jwt.sign(payload, process.env.TOKEN_SECRET, {
@@ -31,15 +32,17 @@ exports.validate = (req, res, next) => {
             })
             .catch((err) => {
                 // console.log(err);
-                return res.status(200).json({
-                    error: err,
-                    logout: true
-                });
+                // return res.status(200).json({
+                //     error: err,
+                //     logout: true
+                // });
+                next(new CustomError(String(err)));
             });
     } else {
-        return res.status(200).json({
-            error: 'No token supplied',
-            logout: true
-        });
+        // return res.status(200).json({
+        //     error: 'No token supplied',
+        //     logout: true
+        // });
+        next(new CustomError('No token supplied'));
     }
 };
