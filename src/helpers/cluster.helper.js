@@ -3,7 +3,7 @@ const numCPUs = require('os').cpus().length;
 
 exports.clusterise = () => {
     const status = { clusterised: false, isMaster: cluster.isMaster };
-    if (process.env.cluster == 'YES') {
+    if (process.env.CLUSTER == 'YES') {
         status.clusterised = true;
         if (cluster.isMaster) {
             console.log(
