@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const configConsts = require('../config/constants');
 const CustomError = require('../errors/custom.error');
+const { decrypt } = require('./crypto.helper');
 
 exports.sign = (payload) => {
     return jwt.sign(payload, process.env.TOKEN_SECRET, {
@@ -27,6 +28,7 @@ exports.validate = (req, res, next) => {
         exports
             .verify(token)
             .then((user) => {
+                user.accessToken = decrypt(user.accessToken);
                 req.user = user;
                 next();
             })
