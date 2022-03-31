@@ -1,23 +1,31 @@
 const crypto = require('crypto');
+const CustomError = require('../errors/custom.error');
+
+const hash = (plainText) => {
+    const hashedText = crypto
+        .createHash('sha256')
+        .update(String(plainText))
+        .digest('base64');
+    return hashedText;
+};
 
 const algorithm = 'aes-256-ctr';
-const secretKey = crypto
-    .createHash('sha256')
-    .update(String(process.env.ENCRYPTION_SECRET_KEY))
-    .digest('base64')
-    .substring(0, 32);
+const secretKey = hash(process.env.ENCRYPTION_SECRET_KEY).substring(0, 32);
 
 const encrypt = (text) => {
+    const hashedText = hash(text);
+    const dataWord = text + '|' + hashedText;
     const iv = crypto.randomBytes(16);
 
     const cipher = crypto.createCipheriv(algorithm, secretKey, iv);
 
-    const encrypted = Buffer.concat([cipher.update(text), cipher.final()]);
+    const encrypted = Buffer.concat([cipher.update(dataWord), cipher.final()]);
+
     return encrypted.toString('hex') + '|' + iv.toString('hex');
 };
 
-const decrypt = (hash) => {
-    const data = hash.split('|');
+const decrypt = (cipherText) => {
+    const data = cipherText.split('|');
     const decipher = crypto.createDecipheriv(
         algorithm,
         secretKey,
@@ -29,7 +37,15 @@ const decrypt = (hash) => {
         decipher.final()
     ]);
 
-    return decrpyted.toString();
+    const decryptedString = decrpyted.toString();
+
+    const dataWord = decryptedString.split('|');
+    const newHash = hash(dataWord[0]);
+    if (newHash === dataWord[1]) {
+        return dataWord[0];
+    } else {
+        throw new CustomError('Decryption of access token failed');
+    }
 };
 
 module.exports = {
