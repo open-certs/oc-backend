@@ -26,25 +26,36 @@ const encrypt = (text) => {
 
 const decrypt = (cipherText) => {
     const data = cipherText.split('|');
-    const decipher = crypto.createDecipheriv(
-        algorithm,
-        secretKey,
-        Buffer.from(data[1], 'hex')
-    );
+    try {
+        if (data.length !== 2) {
+            throw new CustomError('Invalid token');
+        }
+        const decipher = crypto.createDecipheriv(
+            algorithm,
+            secretKey,
+            Buffer.from(data[1], 'hex')
+        );
 
-    const decrpyted = Buffer.concat([
-        decipher.update(Buffer.from(data[0], 'hex')),
-        decipher.final()
-    ]);
+        const decrpyted = Buffer.concat([
+            decipher.update(Buffer.from(data[0], 'hex')),
+            decipher.final()
+        ]);
 
-    const decryptedString = decrpyted.toString();
+        const decryptedString = decrpyted.toString();
 
-    const dataWord = decryptedString.split('|');
-    const newHash = hash(dataWord[0]);
-    if (newHash === dataWord[1]) {
-        return dataWord[0];
-    } else {
-        throw new CustomError('Decryption of access token failed');
+        const dataWord = decryptedString.split('|');
+        const newHash = hash(dataWord[0]);
+        if (newHash === dataWord[1]) {
+            return dataWord[0];
+        } else {
+            throw new CustomError('Decryption of access token failed');
+        }
+    } catch (e) {
+        if (e instanceof CustomError) {
+            throw e;
+        }
+        console.log(e);
+        throw new CustomError('Invalid token');
     }
 };
 
