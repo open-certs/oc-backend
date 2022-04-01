@@ -1,12 +1,7 @@
-const {
-    getGithubRepo,
-    getCommits,
-    getPullRequests
-} = require('../helpers/github.helper');
+const { getMyCommits, getMyPullRequests } = require('../helpers/github.helper');
 const ejs = require('ejs');
 const path = require('path');
 const Certificate = require('../models/certificate.model');
-const constants = require('../config/constants');
 const NotFoundError = require('../errors/notFound.error');
 const CustomError = require('../errors/custom.error');
 const getLastContributionDate = (latestCommit, latestPullRequest) => {
@@ -21,36 +16,15 @@ const getLastContributionDate = (latestCommit, latestPullRequest) => {
     return latestCommit > latestPullRequest ? latestCommit : latestPullRequest;
 };
 
-exports.generateGithubCert = async (req, res, next) => {
+exports.generateCertificate = async (req, res, next) => {
     try {
         const user = req.user;
         // console.log(user);
-        let repo = await getGithubRepo(
-            user.accessToken,
-            req.params.owner,
-            req.params.repo
-        );
-        if (!repo) {
-            throw new NotFoundError('Repo not found');
-        }
-        repo = repo.data;
+        const project = req.project;
 
-        if (repo.private || repo.visibility !== 'public') {
-            throw new CustomError(
-                "Certificate can't be generated for private repos"
-            );
-        }
-        if (repo.archived) {
-            throw new CustomError(
-                "Certificate can't be generated for archived repos"
-            );
-        }
-        if (repo.source) {
-            throw new CustomError("Certificate can't be generated for forks");
-        }
         const [commits, pullRequests] = await Promise.all([
-            getCommits(user.accessToken, req.params.owner, req.params.repo),
-            getPullRequests(user.accessToken, req.params.owner, req.params.repo)
+            getMyCommits(user.accessToken, project.owner, project.name),
+            getMyPullRequests(user.accessToken, project.owner, project.name)
         ]);
 
         if (
@@ -60,7 +34,7 @@ exports.generateGithubCert = async (req, res, next) => {
             throw new CustomError('No commits found by user');
         }
 
-        const images = [constants.GITHUB_LOGO];
+        const images = [project.provider];
 
         const lastContributionDate = getLastContributionDate(
             commits.data.items[0]?.commit?.committer?.date,
@@ -69,8 +43,8 @@ exports.generateGithubCert = async (req, res, next) => {
 
         if (req.body.includeRepositoryImage) {
             images.push({
-                src: repo.owner.avatar_url,
-                url: repo.html_url
+                src: project.ownerAvatar,
+                url: project.repoLink
             });
         }
         if (req.body.includeUserImage) {
@@ -82,8 +56,8 @@ exports.generateGithubCert = async (req, res, next) => {
         const certificate = await Certificate.create({
             userGithubId: user.username,
             userName: user.displayName,
-            projectRepo: req.params.repo,
-            projectOwner: req.params.owner,
+            projectRepo: project.name,
+            projectOwner: project.owner,
             commitCount: commits.data.total_count,
             pullRequestCount: pullRequests.data.total_count,
             lastContributionDate,
@@ -91,9 +65,6 @@ exports.generateGithubCert = async (req, res, next) => {
         });
         return res.status(200).json({
             certificate
-            // data: repo
-            // commits,
-            // pullRequests
         });
     } catch (e) {
         next(e);
