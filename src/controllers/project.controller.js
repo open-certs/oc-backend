@@ -7,6 +7,7 @@ const {
 
 const { sign } = require('../helpers/project.jwt.helper');
 const constants = require('../config/constants');
+const CustomError = require('../errors/custom.error');
 
 const calculateReputation = ({
     closedIssues,
@@ -36,7 +37,7 @@ const calculateReputation = ({
 
     return reputation;
 };
-exports.getGithubRepo = async (req, res) => {
+exports.getGithubRepo = async (req, res, next) => {
     try {
         const user = req.user;
         // console.log(user);
@@ -46,18 +47,18 @@ exports.getGithubRepo = async (req, res) => {
             req.params.repo
         );
         if (!repo) {
-            throw new Error('Repository not found');
+            throw new CustomError('Repository not found');
         }
         repo = repo.data;
 
         if (repo.private || repo.visibility !== 'public') {
-            throw new Error('Private repositories not allowed.');
+            throw new CustomError('Private repositories not allowed.');
         }
         if (repo.archived) {
-            throw new Error('Archived repositories not allowed.');
+            throw new CustomError('Archived repositories not allowed.');
         }
         if (repo.source) {
-            throw new Error('Forked repositories not allowed.');
+            throw new CustomError('Forked repositories not allowed.');
         }
 
         const [pullRequests, issues, contributors] = await Promise.all([
@@ -115,9 +116,6 @@ exports.getGithubRepo = async (req, res) => {
             projectToken: token
         });
     } catch (err) {
-        console.log(err);
-        res.status(200).json({
-            error: String(err)
-        });
+        next(err);
     }
 };

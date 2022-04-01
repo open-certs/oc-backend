@@ -2,7 +2,8 @@ const { getMyCommits, getMyPullRequests } = require('../helpers/github.helper');
 const ejs = require('ejs');
 const path = require('path');
 const Certificate = require('../models/certificate.model');
-
+const NotFoundError = require('../errors/notFound.error');
+const CustomError = require('../errors/custom.error');
 const getLastContributionDate = (latestCommit, latestPullRequest) => {
     if (!latestCommit) {
         return latestPullRequest;
@@ -15,7 +16,7 @@ const getLastContributionDate = (latestCommit, latestPullRequest) => {
     return latestCommit > latestPullRequest ? latestCommit : latestPullRequest;
 };
 
-exports.generateCertificate = async (req, res) => {
+exports.generateCertificate = async (req, res, next) => {
     try {
         const user = req.user;
         // console.log(user);
@@ -30,7 +31,7 @@ exports.generateCertificate = async (req, res) => {
             commits.data.total_count == 0 &&
             pullRequests.data.total_count == 0
         ) {
-            throw new Error('No commits found by user');
+            throw new CustomError('No commits found by user');
         }
 
         const images = [project.provider];
@@ -66,18 +67,15 @@ exports.generateCertificate = async (req, res) => {
             certificate
         });
     } catch (e) {
-        console.log(e);
-        res.status(200).json({
-            error: String(e)
-        });
+        next(e);
     }
 };
 
-exports.getCert = async (req, res) => {
+exports.getCert = async (req, res, next) => {
     try {
         const certificate = await Certificate.getById(req.params.id).lean();
         if (!certificate) {
-            throw new Error('Invalid Certificate Id');
+            throw new NotFoundError('Invalid Certificate Id');
         }
         // console.log({
         //     ...certificate,
@@ -95,25 +93,23 @@ exports.getCert = async (req, res) => {
             )
         });
     } catch (e) {
-        console.log(e);
-        res.render('error', {
-            message: String(e)
-        });
+        next(e);
     }
 };
 
-exports.getCertDetails = async (req, res) => {
+exports.getCertDetails = async (req, res, next) => {
     try {
         const cert_id = req.params.id;
 
         const certificate = await Certificate.getById(cert_id);
+        if (!certificate) {
+            throw new NotFoundError('Invalid Certificate Id');
+        }
 
         res.status(200).json({
             certificate
         });
     } catch (e) {
-        res.status(400).json({
-            error: String(e)
-        });
+        next(e);
     }
 };

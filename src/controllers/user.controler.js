@@ -1,4 +1,4 @@
-exports.profile = (req, res) => {
+exports.profile = (req, res, next) => {
     try {
         const user = req.user;
         delete user._json;
@@ -7,9 +7,6 @@ exports.profile = (req, res) => {
             user
         });
     } catch (e) {
-        console.log(e);
-        res.status(200).json({
-            error: String(e)
-        });
+        next(e);
     }
 };

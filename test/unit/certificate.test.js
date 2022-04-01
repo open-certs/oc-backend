@@ -3,12 +3,22 @@ require('../database.test');
 const { Types } = require('mongoose');
 const certificateController = require('../../src/controllers/certificate.controller');
 const Certificate = require('../../src/models/certificate.model');
-
+const NotFoundError = require('../../src/errors/notFound.error');
 test('should return certificate details when valid certificate id is provided', async () => {
-    const existingCertificate = await Certificate.findOne({});
+    const certificate = new Certificate({
+        userGithubId: 'test-open-certs-userId',
+        userName: 'test-open-certs-userId',
+        projectRepo: 'open-certs',
+        projectOwner: 'open-certs',
+        commitCount: 0,
+        pullRequestCount: 0,
+        lastContributionDate: new Date(),
+        images: []
+    });
+    await certificate.save();
     const mReq = {
         params: {
-            id: String(existingCertificate._id)
+            id: String(certificate._id)
         }
     };
     const mRes = {
@@ -16,9 +26,7 @@ test('should return certificate details when valid certificate id is provided', 
         json: jest.fn((x) => {
             expect(x).toBeTruthy();
             expect(x.error).toBeUndefined();
-            expect(String(x.certificate._id)).toBe(
-                String(existingCertificate._id)
-            );
+            expect(String(x.certificate._id)).toBe(String(certificate._id));
         })
     };
 
@@ -34,12 +42,12 @@ test('should return no certificate details when non-existing certificate id is p
 
     const mRes = {
         status: jest.fn().mockReturnThis(),
-        json: jest.fn((x) => {
-            expect(x).toBeTruthy();
-            expect(x.error).toBeUndefined();
-            expect(x.certificate).toBe(null);
-        })
+        json: jest.fn()
     };
+    const mNext = jest.fn((x) => {
+        expect(x).toBeTruthy();
+        expect(x).toBeInstanceOf(NotFoundError);
+    });
 
-    await certificateController.getCertDetails(mReq, mRes);
+    await certificateController.getCertDetails(mReq, mRes, mNext);
 });

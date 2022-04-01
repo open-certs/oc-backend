@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const configConsts = require('../config/constants');
+const ProjectTokenError = require('../errors/projectToken.error');
 
 exports.sign = (payload) => {
     return jwt.sign(payload, process.env.PROJECT_TOKEN_SECRET, {
@@ -35,16 +36,9 @@ exports.validateProject = (req, res, next) => {
                 next();
             })
             .catch((err) => {
-                console.log(err);
-                return res.status(200).json({
-                    error: err,
-                    logout: true
-                });
+                next(new ProjectTokenError(String(err)));
             });
     } else {
-        return res.status(200).json({
-            error: 'No token supplied',
-            logout: true
-        });
+        next(new ProjectTokenError('No project token supplied'));
     }
 };
