@@ -1,5 +1,6 @@
 const axios = require('axios');
 const CustomError = require('../errors/custom.error');
+const RecaptchaError = require('../errors/recaptcha.error');
 
 exports.validateReCaptcha = (req, res, next) => {
     const token = req.headers['recaptcha'];
@@ -8,7 +9,7 @@ exports.validateReCaptcha = (req, res, next) => {
     }
     if (!token) {
         // return res.json({ error: 'recaptcha token not found!' });
-        return next(new CustomError('Recaptcha token not provided!'));
+        return next(new RecaptchaError('Recaptcha token not provided!'));
     }
 
     // verify url
@@ -23,7 +24,9 @@ exports.validateReCaptcha = (req, res, next) => {
                 // return res.json({
                 //     error: 'captcha verification failed!'
                 // });
-                return next(new CustomError('Recaptcha verification failed!'));
+                return next(
+                    new RecaptchaError('Recaptcha verification failed!')
+                );
             }
             // success
             next();
