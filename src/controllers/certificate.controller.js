@@ -55,7 +55,7 @@ exports.generateCertificate = async (req, res, next) => {
         }
         const certificate = await Certificate.create({
             userGithubId: user.username,
-            userName: user.displayName,
+            userName: user.name,
             projectRepo: project.name,
             projectOwner: project.owner,
             commitCount: commits.data.total_count,
