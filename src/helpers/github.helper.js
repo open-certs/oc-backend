@@ -14,7 +14,7 @@ const getGithubRepo = (auth, owner, repo) => {
     });
 };
 
-const getCommits = (auth, owner, repo) => {
+const getMyCommits = (auth, owner, repo) => {
     const kit = getKit(auth);
     const q = `author:@me repo:${owner}/${repo} sort:committer-date-desc`;
     // console.log(q);
@@ -23,7 +23,7 @@ const getCommits = (auth, owner, repo) => {
     });
 };
 
-const getPullRequests = (auth, owner, repo) => {
+const getMyPullRequests = (auth, owner, repo) => {
     const kit = getKit(auth);
     const q = `is:merged is:pr author:@me repo:${owner}/${repo} sort:created-desc`;
     // console.log(q);
@@ -32,8 +32,36 @@ const getPullRequests = (auth, owner, repo) => {
     });
 };
 
+const getAllMergedPullRequests = (auth, owner, repo) => {
+    const kit = getKit(auth);
+    const q = `is:merged is:pr -author:@me repo:${owner}/${repo} is:closed`;
+    // console.log(q);
+    return kit.rest.search.issuesAndPullRequests({
+        q
+    });
+};
+
+const getAllClosedIssues = (auth, owner, repo) => {
+    const kit = getKit(auth);
+    const q = `is:closed is:issue repo:${owner}/${repo} linked:pr`;
+    return kit.rest.search.issuesAndPullRequests({
+        q
+    });
+};
+
+const getAllContributors = (auth, owner, repo) => {
+    const kit = getKit(auth);
+    return kit.rest.repos.getContributorsStats({
+        owner,
+        repo
+    });
+};
+
 module.exports = {
     getGithubRepo,
-    getCommits,
-    getPullRequests
+    getMyCommits,
+    getMyPullRequests,
+    getAllMergedPullRequests,
+    getAllClosedIssues,
+    getAllContributors
 };

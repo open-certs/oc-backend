@@ -1,0 +1,51 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Node.js CI
+
+on:
+  push:
+    branches: [main, ci-cd]
+  pull_request:
+    branches: [main, ci-cd]
+env:
+  CI: true
+  MONGO_DB_URI: mongodb://localhost:27017/open-certs
+  CLUSTER: yes
+  FRONTEND_URL: http://localhost:3000
+  TOKEN_SECRET: XX
+  GITHUB_CLIENT_ID: XX
+  PROJECT_TOKEN_SECRET: XX
+  GITHUB_CLIENT_SECRET: XX
+  BITBUCKET_CLIENT_ID: XX
+  BITBUCKET_CLIENT_SECRET: XX
+  GITLAB_CLIENT_ID: XX
+  GITLAB_CLIENT_SECRET: XX
+  RECAPTCHA_SECRECT_KEY: XX
+  VALIDATE_RECAPTCHA: YES
+  TEST: YES
+  ENCRYPTION_SECRET_KEY: jhfuhksjdbhjbajhdghabhbdhsabhbajhdbsjahbdysgyhfahbsdhbjbhad
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+        mongodb-version: ["5.0"]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.7.0
+        with:
+          mongodb-version: ${{ matrix.mongodb-version }}
+      - run: npm ci
+      - run: npm run build --if-present
+      - run: npm run quality
