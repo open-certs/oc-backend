@@ -18,6 +18,8 @@
             - Read
         - Pull Requests
             - Read
+        - Issue
+            - Read
 5. Click on **Save** button.
 6. After clicking save you will find a row with the Name you specified in the above form. Click on it to view the **Key** and **Secret**.
 
