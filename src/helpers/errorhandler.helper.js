@@ -1,9 +1,15 @@
 const { ValidationError } = require('express-validation');
+const AuthenticationError = require('../errors/authentication.error');
 const CustomError = require('../errors/custom.error');
 
 // eslint-disable-next-line prettier/prettier, no-unused-vars
 exports.errorHandler = (err, req, res, _) => {
     if (err instanceof CustomError) {
+        return res.status(err.status).json({
+            error: err.getResponse()
+        });
+    }
+    if (err instanceof AuthenticationError) {
         return res.status(err.status).json({
             error: err.getResponse()
         });
