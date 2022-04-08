@@ -1,5 +1,5 @@
 const crypto = require('crypto');
-const CustomError = require('../errors/custom.error');
+const AuthenticationError = require('../errors/authentication.error');
 
 const hash = (plainText) => {
     const hashedText = crypto
@@ -28,7 +28,7 @@ const decrypt = (cipherText) => {
     const data = cipherText.split('|');
     try {
         if (data.length !== 2) {
-            throw new CustomError('Invalid token');
+            throw new AuthenticationError('Invalid token');
         }
         const decipher = crypto.createDecipheriv(
             algorithm,
@@ -48,14 +48,14 @@ const decrypt = (cipherText) => {
         if (newHash === dataWord[1]) {
             return dataWord[0];
         } else {
-            throw new CustomError('Decryption of access token failed');
+            throw new AuthenticationError('Decryption of access token failed');
         }
     } catch (e) {
-        if (e instanceof CustomError) {
+        if (e instanceof AuthenticationError) {
             throw e;
         }
         console.log(e);
-        throw new CustomError('Invalid token');
+        throw new AuthenticationError('Invalid token');
     }
 };
 

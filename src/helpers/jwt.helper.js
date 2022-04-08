@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const configConsts = require('../config/constants');
-const CustomError = require('../errors/custom.error');
+const AuthenticationError = require('../errors/authentication.error');
 const { decrypt } = require('./crypto.helper');
 
 exports.sign = (payload) => {
@@ -38,13 +38,15 @@ exports.validate = (req, res, next) => {
                 //     error: err,
                 //     logout: true
                 // });
-                next(new CustomError(String(err)));
+                //next(new CustomError(String(err)));
+                next(new AuthenticationError(String(err)));
             });
     } else {
         // return res.status(200).json({
         //     error: 'No token supplied',
         //     logout: true
         // });
-        next(new CustomError('No token supplied'));
+        //next(new CustomError('No token supplied'));
+        next(new AuthenticationError('No Token Supplied'));
     }
 };
