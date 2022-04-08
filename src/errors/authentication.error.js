@@ -6,5 +6,8 @@ class AuthenticationError extends CustomError {
         this.name = 'Authentication Error';
         this.type = 'Authentication Error';
     }
+    getResponse() {
+        return { ...super.getResponse(), logout: true };
+    }
 }
 module.exports = AuthenticationError;
