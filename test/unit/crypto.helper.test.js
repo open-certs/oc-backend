@@ -20,7 +20,6 @@ test('should throw error while decrypting invalid encrypted text', () => {
         crypto.decrypt(randomText);
     } catch (e) {
         thrownError = e;
-        console.log(e);
     }
 
     expect(thrownError).toBeTruthy();
@@ -35,7 +34,6 @@ test('should throw error while decrypting invalid formatted encrypted text', () 
         crypto.decrypt(randomText);
     } catch (e) {
         thrownError = e;
-        console.log(e);
     }
 
     expect(thrownError).toBeTruthy();

@@ -11,7 +11,8 @@ on:
 env:
   CI: true
   MONGO_DB_URI: mongodb://localhost:27017/open-certs
-  CLUSTER: yes
+  CLUSTER: YES
+  SHOW_MONGO: YES
   FRONTEND_URL: http://localhost:3000
   TOKEN_SECRET: XX
   GITHUB_CLIENT_ID: XX

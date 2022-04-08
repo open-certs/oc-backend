@@ -15,7 +15,6 @@ exports.verify = (token) =>
             process.env.PROJECT_TOKEN_SECRET,
             function (err, decoded) {
                 if (err) {
-                    console.log(err);
                     return reject(err.message);
                 } else {
                     resolve(decoded);

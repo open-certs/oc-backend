@@ -36,6 +36,6 @@ exports.validateReCaptcha = (req, res, next) => {
             //     error: 'captcha verification failed!'
             // });
             console.log(err);
-            return next(new CustomError('captcha verification failed!'));
+            return next(new CustomError('Captcha verification failed!'));
         });
 };
