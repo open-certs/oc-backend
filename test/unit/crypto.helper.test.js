@@ -1,6 +1,6 @@
 require('../enviroment.test');
 
-const CustomError = require('../../src/errors/custom.error');
+const AuthenticationError = require('../../src/errors/authentication.error');
 const crypto = require('../../src/helpers/crypto.helper');
 
 test('should return the correct plainText when decrypted using valid encrypted text', () => {
@@ -24,7 +24,7 @@ test('should throw error while decrypting invalid encrypted text', () => {
     }
 
     expect(thrownError).toBeTruthy();
-    expect(thrownError instanceof CustomError).toBeTruthy();
+    expect(thrownError instanceof AuthenticationError).toBeTruthy();
 });
 
 test('should throw error while decrypting invalid formatted encrypted text', () => {
@@ -39,5 +39,5 @@ test('should throw error while decrypting invalid formatted encrypted text', () 
     }
 
     expect(thrownError).toBeTruthy();
-    expect(thrownError instanceof CustomError).toBeTruthy();
+    expect(thrownError instanceof AuthenticationError).toBeTruthy();
 });

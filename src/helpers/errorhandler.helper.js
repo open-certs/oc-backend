@@ -11,7 +11,7 @@ exports.errorHandler = (err, req, res, _) => {
     }
     if (err instanceof AuthenticationError) {
         return res.status(err.status).json({
-            error: err.getResponse()
+            error: { ...err.getResponse(), logout: true }
         });
     }
     if (err instanceof ValidationError) {
