@@ -4,7 +4,7 @@ const CustomError = require('../errors/custom.error');
 // eslint-disable-next-line prettier/prettier, no-unused-vars
 exports.errorHandler = (err, req, res, _) => {
     if (err instanceof CustomError) {
-        err.handleError(res);
+        return err.handleError(res);
     }
     if (err instanceof ValidationError) {
         return res.status(400).json({
