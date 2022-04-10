@@ -8,5 +8,10 @@ class CustomError extends Error {
     getResponse() {
         return { message: this.message, type: this.type, name: this.name };
     }
+    handleError(res) {
+        return res.status(this.status).json({
+            error: this.getResponse()
+        });
+    }
 }
 module.exports = CustomError;
