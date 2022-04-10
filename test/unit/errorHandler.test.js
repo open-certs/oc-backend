@@ -131,3 +131,25 @@ test('should return Error without trace when a error is found in production', ()
 
     errorHandler(mError, mReq, mRes, mNext);
 });
+
+test('should call handleError with getResponse when a custom error occurs', () => {
+    const mReq = {};
+    const mError = new CustomError('testing error');
+    const handleError = jest.spyOn(mError, 'handleError');
+    const getResponse = jest.spyOn(mError, 'getResponse');
+    const mRes = {
+        status: jest.fn((x) => {
+            expect(x).toBe(mError.status);
+            return mRes;
+        }),
+        json: jest.fn((x) => {
+            expect(x).toBeTruthy();
+            expect(x.error).toBeTruthy();
+            expect(x.error.type).toBe('CustomError');
+        })
+    };
+    const mNext = jest.fn();
+    errorHandler(mError, mReq, mRes, mNext);
+    expect(handleError).toBeCalledTimes(1);
+    expect(getResponse).toBeCalledTimes(1);
+});
