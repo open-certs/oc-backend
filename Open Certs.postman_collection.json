@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "abc2c677-d134-48ba-9405-ed8f6c260381",
+		"_postman_id": "465d0b08-8a0c-4346-b8fd-ca034a176f1c",
 		"name": "Open Certs",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -238,6 +238,62 @@
 							"path": [
 								"users",
 								"me"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Project",
+			"item": [
+				{
+					"name": "GitLab Project Token",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/project/gitlab/278964",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"project",
+								"gitlab",
+								"278964"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GitHub Project Token",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/project/github/open-certs/oc-backend",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"project",
+								"github",
+								"open-certs",
+								"oc-backend"
 							]
 						}
 					},

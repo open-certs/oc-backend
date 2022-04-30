@@ -122,7 +122,7 @@ exports.getGitHubProjectToken = async (req, res, next) => {
         }
         const user = req.user;
         // console.log(user);
-        let repo = await github.getGithubRepo(
+        let repo = await github.getRepo(
             user.accessToken,
             req.params.owner,
             req.params.repo
