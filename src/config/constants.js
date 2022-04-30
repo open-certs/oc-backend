@@ -29,13 +29,7 @@ module.exports = {
         'pullrequest'
     ],
 
-    GITLAB_SCOPES: [
-        'read_api',
-        'openid',
-        'read_user',
-        'read_repository',
-        'read_registry'
-    ],
+    GITLAB_SCOPES: ['read_api'],
 
     reputationWeight: {
         closedIssues: 6,
