@@ -2,11 +2,11 @@ const { Gitlab } = require('@gitbeaker/node');
 
 const getGitlabApi = (token) => {
     return new Gitlab({
-        token: token
+        oauthToken: token
     });
 };
 
-const getGitlabRepo = (token, id) => {
+const getRepo = (token, id) => {
     const api = getGitlabApi(token);
     return api.Projects.show(id);
 };
@@ -30,19 +30,25 @@ const getMyMergeRequests = (token, id) => {
     });
 };
 
-const getAllMergedRequests = (token, id, userName) => {
+const getAllMergedPullRequests = (token, id, userName) => {
     const api = getGitlabApi(token);
     return api.MergeRequests.all({
         projectId: id,
         not: { authorUsername: userName },
         scope: 'all',
-        state: 'merged'
+        state: 'merged',
+        page: 1,
+        perPage: 1000
     });
 };
 
 const getAllClosedIssues = async (token, id) => {
     const api = getGitlabApi(token);
-    const issueStatistics = await api.IssuesStatistics.all({ projectId: id });
+    const issueStatistics = await api.IssuesStatistics.all({
+        projectId: id,
+        page: 1,
+        perPage: 1000
+    });
     return issueStatistics.statistics.counts.closed;
 };
 
@@ -52,10 +58,10 @@ const getAllContributors = async (token, id) => {
 };
 
 module.exports = {
-    getGitlabRepo,
+    getRepo,
     getMyCommits,
     getMyMergeRequests,
-    getAllMergedRequests,
+    getAllMergedPullRequests,
     getAllClosedIssues,
     getAllContributors
 };

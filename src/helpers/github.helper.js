@@ -6,7 +6,7 @@ const getKit = (auth) => {
     });
 };
 
-const getGithubRepo = (auth, owner, repo) => {
+const getRepo = (auth, owner, repo) => {
     const kit = getKit(auth);
     return kit.rest.repos.get({
         owner,
@@ -58,7 +58,7 @@ const getAllContributors = (auth, owner, repo) => {
 };
 
 module.exports = {
-    getGithubRepo,
+    getRepo,
     getMyCommits,
     getMyPullRequests,
     getAllMergedPullRequests,

@@ -1,16 +1,27 @@
 const express = require('express');
 const router = express.Router();
-const { getGithubRepo } = require('./../controllers/project.controller');
+const {
+    getGitHubProjectToken,
+    getGitLabProjectToken
+} = require('./../controllers/project.controller');
 const { validate } = require('../helpers/jwt.helper');
 const {
-    githubCertificateValidation
+    githubProjectValidation,
+    gitlabProjectValidation
 } = require('../validations/project.validation');
 
 router.post(
     '/github/:owner/:repo',
     validate,
-    githubCertificateValidation,
-    getGithubRepo
+    githubProjectValidation,
+    getGitHubProjectToken
+);
+
+router.post(
+    '/gitlab/:id',
+    validate,
+    gitlabProjectValidation,
+    getGitLabProjectToken
 );
 
 const projectRouter = (app) => {

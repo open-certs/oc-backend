@@ -8,6 +8,11 @@ module.exports = {
         url: 'https://github.com'
     },
 
+    GITLAB_LOGO: {
+        src: 'https://cdn-icons-png.flaticon.com/512/5968/5968853.png',
+        url: 'https://gitlab.com'
+    },
+
     GITHUB_SCOPES: [
         'public_repo',
         'read:user',
