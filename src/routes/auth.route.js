@@ -45,7 +45,7 @@ router.get(
 router.get(
     '/gitlab',
     passport.authenticate('gitlab', {
-        scope: GITLAB_SCOPES
+        scope: GITLAB_SCOPES.join(' ')
     }),
     login
 );
@@ -53,7 +53,7 @@ router.get(
 router.get(
     '/gitlab/callback',
     passport.authenticate('gitlab', {
-        scope: GITLAB_SCOPES
+        scope: GITLAB_SCOPES.join(' ')
     }),
     login
 );
