@@ -116,7 +116,7 @@
 			"name": "Certificate",
 			"item": [
 				{
-					"name": "Generate Github Cert",
+					"name": "Generate Certificate",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -124,24 +124,30 @@
 								"key": "Authorization",
 								"value": "{{auth_token}}",
 								"type": "text"
+							},
+							{
+								"key": "project-token",
+								"value": "{{project_token}}",
+								"type": "text"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": ""
+							"raw": "{\n    \"includeUserImage\": true,\n    \"includeRepositoryImage\": true \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
 						},
 						"url": {
-							"raw": "http://localhost:4000/certificate/github/kaushik-rishi/rocketcp",
-							"protocol": "http",
+							"raw": "{{base_url}}/certificate/",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "4000",
 							"path": [
 								"certificate",
-								"github",
-								"kaushik-rishi",
-								"rocketcp"
+								""
 							]
 						}
 					},
@@ -183,12 +189,10 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://localhost:4000/certificate/certDetails/{{certificateId}}",
-							"protocol": "http",
+							"raw": "{{base_url}}/certificate/certDetails/{{certificateId}}",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "4000",
 							"path": [
 								"certificate",
 								"certDetails",

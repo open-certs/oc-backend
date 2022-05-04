@@ -30,7 +30,8 @@ const calculateReputation = ({
 
     Object.keys(consideredData).forEach((key) => {
         reputation +=
-            constants.reputationWeight[key] * consideredData[key] || 0;
+            constants.reputationWeight[key] *
+                Math.min(consideredData[key], 999) || 0;
     });
 
     return reputation;
@@ -74,6 +75,7 @@ exports.getGitLabProjectToken = async (req, res, next) => {
         const accumulatedData = {
             name: repo.name,
             owner: repo.namespace.name,
+            id: req.params.id,
             ownerAvatar: repo.avatar_url || repo.owner.avatar_url,
             ownerLink: repo.namespace.web_url,
             repoLink: repo.web_url,
@@ -84,7 +86,8 @@ exports.getGitLabProjectToken = async (req, res, next) => {
             pullRequests: pullRequests ? pullRequests.length : 0,
             closedIssues: issues,
             contributors: contributors.length,
-            provider: constants.GITLAB_LOGO
+            provider: constants.GITLAB_LOGO,
+            service: 'gitlab'
         };
 
         const reputation = calculateReputation(accumulatedData);
@@ -108,7 +111,6 @@ exports.getGitLabProjectToken = async (req, res, next) => {
             projectToken: token
         });
     } catch (err) {
-        console.log(err);
         next(err);
     }
 };
@@ -174,7 +176,8 @@ exports.getGitHubProjectToken = async (req, res, next) => {
             closedIssues: issues.data.total_count,
             contributors: contributors.data.length,
             subscribers: repo.subscribers_count,
-            provider: constants.GITHUB_LOGO
+            provider: constants.GITHUB_LOGO,
+            service: 'github'
         };
         const reputation = calculateReputation(accumulatedData);
         // if (reputation < constants.thresholdWeight)

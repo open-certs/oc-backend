@@ -1,4 +1,5 @@
-const { getMyCommits, getMyPullRequests } = require('../helpers/github.helper');
+const github = require('../helpers/github.helper');
+const gitlab = require('../helpers/gitlab.helper');
 const ejs = require('ejs');
 const path = require('path');
 const Certificate = require('../models/certificate.model');
@@ -16,30 +17,61 @@ const getLastContributionDate = (latestCommit, latestPullRequest) => {
     return latestCommit > latestPullRequest ? latestCommit : latestPullRequest;
 };
 
+const getGitHubData = async (user, project) => {
+    const [commits, pullRequests] = await Promise.all([
+        github.getMyCommits(user.accessToken, project.owner, project.name),
+        github.getMyPullRequests(user.accessToken, project.owner, project.name)
+    ]);
+    const commitCount = commits.data.total_count;
+    const pullRequestCount = pullRequests.data.total_count;
+    if (commitCount === 0 && pullRequestCount === 0) {
+        throw new CustomError('No commits found by user');
+    }
+    const lastContributionDate = getLastContributionDate(
+        commits.data.items[0]?.commit?.committer?.date,
+        pullRequests.data.items[0]?.created_at
+    );
+    return { commitCount, pullRequestCount, lastContributionDate };
+};
+
+const getGitLabData = async (user, project) => {
+    const [commits, pullRequests] = await Promise.all([
+        gitlab.getMyCommits(user.accessToken, project.id, user.email),
+        gitlab.getMyMergeRequests(user.accessToken, project.id)
+    ]);
+    const commitCount = commits.length;
+    const pullRequestCount = pullRequests.length;
+    if (commitCount === 0 && pullRequestCount === 0) {
+        throw new CustomError('No commits found by user');
+    }
+    const lastContributionDate = getLastContributionDate(
+        commits[0]?.created_at,
+        pullRequests[0]?.created_at
+    );
+    return { commitCount, pullRequestCount, lastContributionDate };
+};
+
+const getData = async (user, project) => {
+    if (user.kind === 'github') {
+        return await getGitHubData(user, project);
+    }
+    return await getGitLabData(user, project);
+};
+
 exports.generateCertificate = async (req, res, next) => {
     try {
         const user = req.user;
-        // console.log(user);
         const project = req.project;
-
-        const [commits, pullRequests] = await Promise.all([
-            getMyCommits(user.accessToken, project.owner, project.name),
-            getMyPullRequests(user.accessToken, project.owner, project.name)
-        ]);
-
-        if (
-            commits.data.total_count == 0 &&
-            pullRequests.data.total_count == 0
-        ) {
-            throw new CustomError('No commits found by user');
+        if (user.kind !== project.service) {
+            throw new CustomError(
+                'Login Credentials not found for current service!'
+            );
         }
 
-        const images = [project.provider];
+        const { commitCount, pullRequestCount, lastContributionDate } =
+            await getData(user, project);
 
-        const lastContributionDate = getLastContributionDate(
-            commits.data.items[0]?.commit?.committer?.date,
-            pullRequests.data.items[0]?.created_at
-        );
+        const images = [project.provider];
 
         if (req.body.includeRepositoryImage) {
             images.push({
@@ -58,13 +90,14 @@ exports.generateCertificate = async (req, res, next) => {
             userName: user.name,
             projectRepo: project.name,
             projectOwner: project.owner,
-            commitCount: commits.data.total_count,
-            pullRequestCount: pullRequests.data.total_count,
+            commitCount,
+            pullRequestCount,
             lastContributionDate,
             images
         });
         return res.status(200).json({
-            certificate
+            certificate,
+            url: process.env.BASE_URL + '/certificate/' + certificate._id
         });
     } catch (e) {
         next(e);
