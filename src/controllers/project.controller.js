@@ -30,7 +30,8 @@ const calculateReputation = ({
 
     Object.keys(consideredData).forEach((key) => {
         reputation +=
-            constants.reputationWeight[key] * consideredData[key] || 0;
+            constants.reputationWeight[key] *
+                Math.min(consideredData[key], 999) || 0;
     });
 
     return reputation;

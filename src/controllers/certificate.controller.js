@@ -96,7 +96,8 @@ exports.generateCertificate = async (req, res, next) => {
             images
         });
         return res.status(200).json({
-            certificate
+            certificate,
+            url: process.env.BASE_URL + '/certificate/' + certificate._id
         });
     } catch (e) {
         next(e);

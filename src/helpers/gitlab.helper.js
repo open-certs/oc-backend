@@ -26,7 +26,9 @@ const getMyMergeRequests = (token, id) => {
         scope: 'created_by_me',
         orderBy: 'created_at',
         sort: 'desc',
-        state: 'merged'
+        state: 'merged',
+        page: 1,
+        perPage: 1000
     });
 };
 
