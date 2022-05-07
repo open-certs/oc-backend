@@ -24,7 +24,7 @@
     "cors": "^2.8.5",
     "debug": "~2.6.9",
     "dotenv": "^16.0.0",
-    "ejs": "~2.6.1",
+    "ejs": "~3.1.7",
     "express": "~4.16.1",
     "express-validation": "^3.0.8",
     "http-errors": "~1.6.3",
