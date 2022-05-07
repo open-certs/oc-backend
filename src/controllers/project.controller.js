@@ -2,6 +2,8 @@ const github = require('../helpers/github.helper');
 
 const gitlab = require('../helpers/gitlab.helper');
 
+const bitbuket = require('../helpers/bitbucket.helper');
+
 const { sign } = require('../helpers/project.jwt.helper');
 const constants = require('../config/constants');
 const CustomError = require('../errors/custom.error');
@@ -36,6 +38,112 @@ const calculateReputation = ({
 
     return reputation;
 };
+
+exports.getBitBucketProjectToken = async (req, res, next) => {
+    try {
+        if (req.user.kind !== 'bitbucket') {
+            throw new CustomError(
+                'Login Credentials not found for current service!'
+            );
+        }
+        const user = req.user;
+        let repo = await bitbuket.getRepo(
+            user.accessToken,
+            req.params.workspace,
+            req.params.repo
+        );
+        repo = repo.data;
+        if (!repo) {
+            throw new CustomError('Repository not found');
+        }
+
+        if (repo.is_private) {
+            throw new CustomError('Private repositories not allowed.');
+        }
+
+        if (repo.parent) {
+            throw new CustomError('Forked repositories not allowed.');
+        }
+        const [
+            pullRequests,
+            issues,
+            contributors,
+            permission,
+            forkList,
+            watchers
+        ] = await Promise.all([
+            bitbuket.getAllMergedPullRequests(
+                user.accessToken,
+                'MERGED',
+                req.params.repo,
+                req.params.workspace
+            ),
+            bitbuket.getAllClosedIssues(
+                user.accessToken,
+                req.params.repo,
+                req.params.workspace
+            ),
+            bitbuket.getAllContributors(user.accessToken, req.params.workspace),
+            bitbuket.getRepoPermission(
+                user.accessToken,
+                repo.workspace.slug,
+                req.user.serviceId
+            ),
+            bitbuket.getForkList(
+                user.accessToken,
+                req.params.repo,
+                req.params.workspace
+            ),
+            bitbuket.getRepoWatchers(
+                user.accessToken,
+                req.params.repo,
+                req.params.workspace
+            )
+        ]);
+        const accumulatedData = {
+            name: repo.name,
+            owner: repo.workspace.name,
+            ownerAvatar: repo.links.avatar.href,
+            forks: forkList.data.size,
+            watchers: watchers.data.size,
+            ownerLink: repo.workspace.links.html.href,
+            repoLink: repo.links.html.href,
+            repoSlug: repo.slug,
+            workspaceSlug: repo.workspace.slug,
+            permissions: { maintain: permission },
+            pullRequests: pullRequests.data.size,
+            closedIssues: issues.data.size,
+            contributors: contributors.data.size,
+            provider: constants.BITBUCKET_LOGO,
+            service: 'bitbucket'
+        };
+
+        const reputation = calculateReputation(accumulatedData);
+        // if (reputation < constants.thresholdWeight)
+        //     throw new Error('Repository is not appropriate');
+
+        let category = null;
+        Object.keys(constants.categories).forEach((key) => {
+            if (constants.categories[key] < reputation) {
+                category = key;
+            }
+        });
+
+        accumulatedData['category'] = category;
+        accumulatedData['reputation'] = reputation;
+        accumulatedData['thresholdWeight'] = constants.thresholdWeight;
+
+        const token = sign(accumulatedData);
+        res.status(200).json({
+            accumulatedData,
+            projectToken: token
+        });
+    } catch (err) {
+        console.log(err);
+        next(err);
+    }
+};
+
 exports.getGitLabProjectToken = async (req, res, next) => {
     try {
         if (req.user.kind !== 'gitlab') {
@@ -44,14 +152,9 @@ exports.getGitLabProjectToken = async (req, res, next) => {
             );
         }
         const user = req.user;
-        // console.log(user);
-        let repo = await gitlab.getRepo(user.accessToken, req.params.id);
-        // console.log(repo);
+        const repo = await gitlab.getRepo(user.accessToken, req.params.id);
         if (!repo) {
             throw new CustomError('Repository not found');
-        }
-        if (req.user.kind === 'github') {
-            repo = repo.data;
         }
 
         if (repo.private || repo.visibility !== 'public') {
@@ -123,7 +226,6 @@ exports.getGitHubProjectToken = async (req, res, next) => {
             );
         }
         const user = req.user;
-        // console.log(user);
         let repo = await github.getRepo(
             user.accessToken,
             req.params.owner,

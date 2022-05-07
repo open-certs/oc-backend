@@ -1,5 +1,6 @@
 const github = require('../helpers/github.helper');
 const gitlab = require('../helpers/gitlab.helper');
+const bitbuket = require('../helpers/bitbucket.helper');
 const ejs = require('ejs');
 const path = require('path');
 const Certificate = require('../models/certificate.model');
@@ -51,10 +52,25 @@ const getGitLabData = async (user, project) => {
     return { commitCount, pullRequestCount, lastContributionDate };
 };
 
-const getData = async (user, project) => {
-    if (user.kind === 'github') {
-        return await getGitHubData(user, project);
+const getBitBucketData = async (user, project) => {
+    let pullRequests = await bitbuket.getAllMergedPullRequests(
+        user.accessToken,
+        'MERGED',
+        project.repoSlug,
+        project.workspaceSlug
+    );
+    pullRequests = pullRequests.data.values;
+    const pullRequestCount = pullRequests.length;
+    if (pullRequestCount === 0) {
+        throw new CustomError('No commits found by user');
     }
+    const lastContributionDate = pullRequests[0]?.created_on;
+    return { pullRequestCount, lastContributionDate };
+};
+
+const getData = async (user, project) => {
+    if (user.kind === 'github') return await getGitHubData(user, project);
+    if (user.kind === 'bitbucket') return await getBitBucketData(user, project);
     return await getGitLabData(user, project);
 };
 

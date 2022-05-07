@@ -13,6 +13,11 @@ module.exports = {
         url: 'https://gitlab.com'
     },
 
+    BITBUCKET_LOGO: {
+        src: 'https://cdn-icons-png.flaticon.com/512/6125/6125001.png',
+        url: 'https://bitbucket.com'
+    },
+
     GITHUB_SCOPES: [
         'public_repo',
         'read:user',
@@ -45,8 +50,8 @@ module.exports = {
     thresholdWeight: 250,
 
     categories: {
-        bronze: 150,
-        silver: 200,
-        gold: 250
+        bronze: 100,
+        silver: 750,
+        gold: 5000
     }
 };

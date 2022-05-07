@@ -26,6 +26,7 @@ passport.use(
                 username: profile.username,
                 profileUrl: profile.profileUrl,
                 avatar: profile.photos[0].value,
+                serviceId: profile.id,
                 kind: 'github'
             });
         }
@@ -42,6 +43,7 @@ passport.use(
             apiVersion: '2.0'
         },
         function (accessToken, refreshToken, profile, done) {
+            console.log(profile);
             done(null, {
                 accessToken,
                 email: '',
@@ -49,6 +51,7 @@ passport.use(
                 username: profile.username,
                 profileUrl: profile.profileUrl,
                 avatar: profile._json.links.avatar.href,
+                serviceId: profile.id,
                 kind: 'bitbucket'
             });
         }
@@ -70,6 +73,7 @@ passport.use(
                 username: profile.username,
                 profileUrl: profile.profileUrl,
                 avatar: profile.avatarUrl,
+                serviceId: profile.id,
                 kind: 'gitlab'
             });
         }
