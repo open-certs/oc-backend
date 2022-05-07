@@ -2,12 +2,14 @@ const express = require('express');
 const router = express.Router();
 const {
     getGitHubProjectToken,
-    getGitLabProjectToken
+    getGitLabProjectToken,
+    getBitBucketProjectToken
 } = require('./../controllers/project.controller');
 const { validate } = require('../helpers/jwt.helper');
 const {
     githubProjectValidation,
-    gitlabProjectValidation
+    gitlabProjectValidation,
+    bitBucketProjectValidation
 } = require('../validations/project.validation');
 
 router.post(
@@ -22,6 +24,13 @@ router.post(
     validate,
     gitlabProjectValidation,
     getGitLabProjectToken
+);
+
+router.post(
+    '/bitbucket/:workspace/:repo',
+    validate,
+    bitBucketProjectValidation,
+    getBitBucketProjectToken
 );
 
 const projectRouter = (app) => {
