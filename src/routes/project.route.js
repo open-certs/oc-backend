@@ -11,11 +11,13 @@ const {
     gitlabProjectValidation,
     bitBucketProjectValidation
 } = require('../validations/project.validation');
+const { checkUser } = require('../helpers/user.helper');
 
 router.post(
     '/github/:owner/:repo',
     validate,
     githubProjectValidation,
+    checkUser('github'),
     getGitHubProjectToken
 );
 
@@ -23,6 +25,7 @@ router.post(
     '/gitlab/:id',
     validate,
     gitlabProjectValidation,
+    checkUser('gitlab'),
     getGitLabProjectToken
 );
 
@@ -30,6 +33,7 @@ router.post(
     '/bitbucket/:workspace/:repo',
     validate,
     bitBucketProjectValidation,
+    checkUser('bitbucket'),
     getBitBucketProjectToken
 );
 

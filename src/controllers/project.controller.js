@@ -41,11 +41,6 @@ const calculateReputation = ({
 
 exports.getBitBucketProjectToken = async (req, res, next) => {
     try {
-        if (req.user.kind !== 'bitbucket') {
-            throw new CustomError(
-                'Login Credentials not found for current service!'
-            );
-        }
         const user = req.user;
         let repo = await bitbuket.getRepo(
             user.accessToken,
@@ -146,11 +141,6 @@ exports.getBitBucketProjectToken = async (req, res, next) => {
 
 exports.getGitLabProjectToken = async (req, res, next) => {
     try {
-        if (req.user.kind !== 'gitlab') {
-            throw new CustomError(
-                'Login Credentials not found for current service!'
-            );
-        }
         const user = req.user;
         const repo = await gitlab.getRepo(user.accessToken, req.params.id);
         if (!repo) {
@@ -220,11 +210,6 @@ exports.getGitLabProjectToken = async (req, res, next) => {
 
 exports.getGitHubProjectToken = async (req, res, next) => {
     try {
-        if (req.user.kind !== 'github') {
-            throw new CustomError(
-                'Login Credentials not found for current service!'
-            );
-        }
         const user = req.user;
         let repo = await github.getRepo(
             user.accessToken,
