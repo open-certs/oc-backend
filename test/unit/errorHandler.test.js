@@ -4,7 +4,7 @@ const NotFoundError = require('../../src/errors/notFound.error');
 const CustomError = require('../../src/errors/custom.error');
 const { ValidationError } = require('express-validation');
 const AuthenticationError = require('../../src/errors/authentication.error');
-const CurrentlyUnavailableError = require('../../src/errors/currentlyUnavailable.error');
+const GithubAPIUnavailableError = require('../../src/errors/githubAPITimeout.error');
 
 test('should return customError when a customError is found', () => {
     const mReq = {};
@@ -64,9 +64,9 @@ test('should return AuthenticationError when a NotFoundError is found', () => {
     errorHandler(mError, mReq, mRes, mNext);
 });
 
-test('should return CurrentlyUnavailableError when a NotFoundError is found', () => {
+test('should return GithubAPIUnavailableError when a 202 status code is found', () => {
     const mReq = {};
-    const mError = new CurrentlyUnavailableError('testing');
+    const mError = new GithubAPIUnavailableError('testing');
     const mRes = {
         status: jest.fn((x) => {
             expect(x).toBe(503);
