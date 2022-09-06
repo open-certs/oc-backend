@@ -43,7 +43,7 @@ passport.use(
             apiVersion: '2.0'
         },
         function (accessToken, refreshToken, profile, done) {
-            console.log(profile);
+            // console.log(profile);
             done(null, {
                 accessToken,
                 email: '',

@@ -1,3 +1,4 @@
+const PassportError = require('../errors/passport.error');
 const { encrypt } = require('../helpers/crypto.helper');
 const { sign } = require('../helpers/jwt.helper');
 
@@ -17,4 +18,9 @@ exports.login = (req, res, next) => {
     } catch (e) {
         next(e);
     }
+};
+
+exports.errorHandler = (err, _req, _res, next) => {
+    if (err) next(new PassportError(err.message));
+    next();
 };
