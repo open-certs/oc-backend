@@ -2,7 +2,7 @@ const express = require('express');
 const { GITHUB_SCOPES } = require('../config/constants');
 const { GITLAB_SCOPES } = require('../config/constants');
 const { BITBUCKET_SCOPES } = require('../config/constants');
-const { login, errorHandler } = require('../controllers/auth.controller');
+const { login } = require('../controllers/auth.controller');
 const router = express.Router();
 const passport = require('../helpers/passport.helper');
 
@@ -11,8 +11,7 @@ router.get(
     '/github/',
     passport.authenticate('github', {
         scope: GITHUB_SCOPES
-    }),
-    errorHandler
+    })
 );
 
 router.get(
@@ -29,8 +28,7 @@ router.get(
     '/bitbucket',
     passport.authenticate('bitbucket', {
         scope: BITBUCKET_SCOPES
-    }),
-    errorHandler
+    })
 );
 
 router.get(
@@ -46,8 +44,7 @@ router.get(
     '/gitlab',
     passport.authenticate('gitlab', {
         scope: GITLAB_SCOPES.join(' ')
-    }),
-    errorHandler
+    })
 );
 
 router.get(
@@ -57,6 +54,8 @@ router.get(
     }),
     login
 );
+
+router.use(passport.errorFormatter);
 
 const authRouter = (app) => {
     app.use('/auth', router);
