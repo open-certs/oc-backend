@@ -2,6 +2,7 @@ const passport = require('passport');
 const GitHubStrategy = require('passport-github2');
 const BitbucketStrategy = require('passport-bitbucket-oauth2').Strategy;
 const GitlabStrategy = require('passport-gitlab2');
+const PassportError = require('../errors/passport.error');
 
 passport.serializeUser(function (user, done) {
     done(null, user);
@@ -43,7 +44,7 @@ passport.use(
             apiVersion: '2.0'
         },
         function (accessToken, refreshToken, profile, done) {
-            console.log(profile);
+            // console.log(profile);
             done(null, {
                 accessToken,
                 email: '',
@@ -79,5 +80,9 @@ passport.use(
         }
     )
 );
+
+passport.errorFormatter = (err, _req, _res, next) => {
+    next(new PassportError(err.message, err.status));
+};
 
 module.exports = passport;
