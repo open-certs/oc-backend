@@ -10,7 +10,8 @@ const passport = require('../helpers/passport.helper');
 router.get(
     '/github/',
     passport.authenticate('github', {
-        scope: GITHUB_SCOPES
+        scope: GITHUB_SCOPES,
+        session: false
     })
 );
 
@@ -18,7 +19,8 @@ router.get(
     '/github/callback',
     passport.authenticate('github', {
         scope: GITHUB_SCOPES,
-        failureRedirect: 'http://localhost:3000/'
+        failureRedirect: 'http://localhost:3000/',
+        session: false
     }),
     login
 );
@@ -27,14 +29,16 @@ router.get(
 router.get(
     '/bitbucket',
     passport.authenticate('bitbucket', {
-        scope: BITBUCKET_SCOPES
+        scope: BITBUCKET_SCOPES,
+        session: false
     })
 );
 
 router.get(
     '/bitbucket/callback',
     passport.authenticate('bitbucket', {
-        scope: BITBUCKET_SCOPES
+        scope: BITBUCKET_SCOPES,
+        session: false
     }),
     login
 );
@@ -43,14 +47,16 @@ router.get(
 router.get(
     '/gitlab',
     passport.authenticate('gitlab', {
-        scope: GITLAB_SCOPES.join(' ')
+        scope: GITLAB_SCOPES.join(' '),
+        session: false
     })
 );
 
 router.get(
     '/gitlab/callback',
     passport.authenticate('gitlab', {
-        scope: GITLAB_SCOPES.join(' ')
+        scope: GITLAB_SCOPES.join(' '),
+        session: false
     }),
     login
 );
