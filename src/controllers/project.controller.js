@@ -131,7 +131,8 @@ exports.getBitBucketProjectToken = async (req, res, next) => {
         const token = sign(accumulatedData);
         res.status(200).json({
             accumulatedData,
-            projectToken: token
+            projectToken: token,
+            levels: constants.categories
         });
     } catch (err) {
         console.log(err);
@@ -201,7 +202,8 @@ exports.getGitLabProjectToken = async (req, res, next) => {
         const token = sign(accumulatedData);
         res.status(200).json({
             accumulatedData,
-            projectToken: token
+            projectToken: token,
+            levels: constants.categories
         });
     } catch (err) {
         next(err);
@@ -284,7 +286,8 @@ exports.getGitHubProjectToken = async (req, res, next) => {
         const token = sign(accumulatedData);
         res.status(200).json({
             accumulatedData,
-            projectToken: token
+            projectToken: token,
+            levels: constants.categories
         });
     } catch (err) {
         next(err);
