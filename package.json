@@ -25,7 +25,7 @@
     "debug": "~2.6.9",
     "dotenv": "^16.0.0",
     "ejs": "~3.1.7",
-    "express": "~4.16.1",
+    "express": "~4.17.3",
     "express-validation": "^3.0.8",
     "http-errors": "~1.6.3",
     "jsonwebtoken": "^8.5.1",
